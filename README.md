@@ -65,6 +65,8 @@ npm run dev
 ### v1
 - [ ] Google Sheet → map data pipeline (service account, read-only)
 - [ ] Google Places API enrichment — geocode each row for lat/lng; also pull cuisine, price level, and hours while we're there
+- [ ] Weekly cron job — syncs sheet → Places API → cached JSON; records `lastUpdated` timestamp
+- [ ] "Last updated" date shown in map UI
 - [ ] Map view with current-location overlay (Mapbox)
 - [ ] Filter sidebar — type (restaurant/bar/snack), cuisine, price ($–$$$$), open now, borough, visited vs. want-to-go
 - [ ] Text search on name and notes
