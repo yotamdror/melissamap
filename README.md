@@ -36,10 +36,10 @@ The sheet is the source of truth — add a row, refresh the map.
 ## Tech Stack *(planned)*
 
 - **Frontend** — React + TypeScript, Vite
-- **Map** — Mapbox GL JS or Google Maps JS API
+- **Map** — Mapbox GL JS
 - **Data** — Google Sheets API (read-only)
 - **Auth** — simple shared password (JWT or session cookie)
-- **AI search** *(optional)* — Anthropic Claude API for natural-language filtering
+- **AI search** *(v2)* — Anthropic Claude API for natural-language filtering
 - **Hosting** — Vercel or Netlify (edge-optimized for mobile)
 
 ## Getting Started
@@ -62,10 +62,18 @@ npm run dev
 
 ## Roadmap
 
-- [ ] Google Sheet → map data pipeline
-- [ ] Map view with location overlay
-- [ ] Filter sidebar (type, borough, visited/want-to-go)
-- [ ] Password gate
+### v1
+- [ ] Google Sheet → map data pipeline (service account, read-only)
+- [ ] Map view with current-location overlay (Mapbox)
+- [ ] Filter sidebar — type (restaurant/bar/snack), borough, visited vs. want-to-go
+- [ ] Text search on name and notes
+- [ ] Shared password gate (single password, JWT cookie)
 - [ ] Mobile layout polish
-- [ ] Claude-powered natural language search
 - [ ] Share a spot (deeplink to pin)
+
+### v2
+- [ ] Google Places API enrichment — pull cuisine, price level, hours per row
+- [ ] Filter by cuisine, price ($–$$$$), open now
+- [ ] Claude-powered natural language search ("cheap ramen near me")
+- [ ] Multi-user auth — viewer vs. editor roles
+- [ ] In-app editing — add/edit spots without touching Google Sheets
