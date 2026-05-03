@@ -64,16 +64,15 @@ npm run dev
 
 ### v1
 - [ ] Google Sheet → map data pipeline (service account, read-only)
+- [ ] Google Places API enrichment — geocode each row for lat/lng; also pull cuisine, price level, and hours while we're there
 - [ ] Map view with current-location overlay (Mapbox)
-- [ ] Filter sidebar — type (restaurant/bar/snack), borough, visited vs. want-to-go
+- [ ] Filter sidebar — type (restaurant/bar/snack), cuisine, price ($–$$$$), open now, borough, visited vs. want-to-go
 - [ ] Text search on name and notes
 - [ ] Shared password gate (single password, JWT cookie)
 - [ ] Mobile layout polish
 - [ ] Share a spot (deeplink to pin)
 
 ### v2
-- [ ] Google Places API enrichment — pull cuisine, price level, hours per row
-- [ ] Filter by cuisine, price ($–$$$$), open now
 - [ ] Claude-powered natural language search ("cheap ramen near me")
 - [ ] Multi-user auth — viewer vs. editor roles
 - [ ] In-app editing — add/edit spots without touching Google Sheets
