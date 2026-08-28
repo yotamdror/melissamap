@@ -45,9 +45,16 @@ function SearchAndCuisine({
 }) {
   const [focused, setFocused] = useState(false);
 
+  // Word-boundary prefix match, not "contains anywhere" - otherwise "it" would
+  // suggest "City Park" (C-it-y) and "Non Profit Organization" (Prof-it).
+  function matchesQuery(cuisine: string, query: string): boolean {
+    const q = query.toLowerCase();
+    return cuisine.toLowerCase().split(/\s+/).some(word => word.startsWith(q));
+  }
+
   const suggestions = search.trim()
     ? cuisines
-        .filter(c => !selectedCuisines.includes(c) && c.toLowerCase().includes(search.toLowerCase()))
+        .filter(c => !selectedCuisines.includes(c) && matchesQuery(c, search))
         .slice(0, 8)
     : [];
 
