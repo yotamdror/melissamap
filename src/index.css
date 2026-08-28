@@ -28,9 +28,16 @@ html, body, #root {
 /* ── Layout ────────────────────────────────────────────────────────────────── */
 
 .app {
-  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
+}
+
+.app__content {
+  position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ── Password gate ─────────────────────────────────────────────────────────── */
@@ -115,47 +122,32 @@ html, body, #root {
   inset: 0;
 }
 
-/* Bottom-anchored, matching the direction the filter sheet rises from -
-   naturally sits under the sheet's higher z-index once it's open, so it
-   needs no extra visibility logic. */
-.map-filter-trigger {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+/* Map/List toggle - lives inline in the filter bar now, not floating over
+   the content, so it's identical in both views instead of a separate
+   overlay control. */
+.view-toggle {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 11px 20px;
-  background: rgba(28, 28, 30, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  color: white;
-  border: 0.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 22px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 2px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 8px;
+  padding: 2px;
 }
 
-.view-toggle {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  z-index: 10;
-  padding: 9px 16px;
-  background: rgba(28, 28, 30, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  color: white;
-  border: 0.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 18px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  font-size: 13px;
+.view-toggle__option {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-sidebar-muted);
+  font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+}
+
+.view-toggle__option--active {
+  background: var(--color-sidebar-text);
+  color: var(--color-sidebar-bg);
 }
 
 /* ── List view ─────────────────────────────────────────────────────────────── */
@@ -171,11 +163,7 @@ html, body, #root {
 .list-view__scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 76px 16px 100px;
-}
-
-.list-view__admin {
-  margin-bottom: 16px;
+  padding: 16px;
 }
 
 .list-view__add-btn {
@@ -188,6 +176,7 @@ html, body, #root {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  margin-bottom: 16px;
 }
 
 .list-view__count {
@@ -208,6 +197,27 @@ html, body, #root {
   gap: 8px;
 }
 
+.list-row__top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.list-row__edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 7px;
+  color: var(--color-sidebar-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .list-row__name {
   font-size: 15px;
   font-weight: 600;
@@ -215,12 +225,25 @@ html, body, #root {
 }
 
 .list-row__facts {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 13px;
   color: var(--color-sidebar-muted);
   margin-top: 2px;
 }
 
+.list-row__reviews-link {
+  flex-shrink: 0;
+}
+
 .list-row__neighborhood {
+  font-size: 12px;
+  color: var(--color-sidebar-muted);
+  margin-top: 2px;
+}
+
+.list-row__hours {
   font-size: 12px;
   color: var(--color-sidebar-muted);
   margin-top: 2px;
@@ -231,6 +254,53 @@ html, body, #root {
   color: var(--color-sidebar-text);
   margin-top: 4px;
   line-height: 1.4;
+}
+
+/* ── Place form modal (shared by add + edit, from either view) ───────────────── */
+
+.place-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+}
+
+.place-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.place-modal__sheet {
+  position: relative;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--color-sidebar-bg);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.place-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .place-modal {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .place-modal__sheet {
+    width: 420px;
+    max-height: 80vh;
+    border-radius: 16px;
+  }
 }
 
 /* ── Add place form ────────────────────────────────────────────────────────── */
@@ -376,50 +446,18 @@ html, body, #root {
   font-style: italic;
 }
 
-/* ── Filter sidebar ────────────────────────────────────────────────────────── */
+/* ── Filter bar ────────────────────────────────────────────────────────────── */
 
-/* Mobile: a bottom sheet, not a full-screen drawer - the map stays visible
-   and interactive (pan/zoom/tap pins) above it while it's open. */
+/* A persistent bar in normal document flow (not a modal/overlay) - it pushes
+   the map/list content down instead of floating over it, and looks and
+   behaves identically whichever view is active. */
 .filter-sidebar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  max-height: 60vh;
-  width: 100%;
-  background: rgba(28, 28, 30, 0.82);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 0.5px solid rgba(255, 255, 255, 0.1);
-  border-bottom: none;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
-  transform: translateY(100%);
-  transition: transform 0.25s ease;
-  overflow-y: auto;
-}
-
-.filter-sidebar--open {
-  transform: translateY(0);
-}
-
-.filter-sidebar__grabber {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 10px auto 0;
   flex-shrink: 0;
-}
-
-.filter-sidebar__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px 0;
+  width: 100%;
+  max-height: 45vh;
+  background: rgba(28, 28, 30, 0.94);
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+  overflow-y: auto;
 }
 
 .filter-sidebar__title {
@@ -439,10 +477,21 @@ html, body, #root {
 }
 
 .filter-sidebar__body {
-  padding: 20px;
+  padding: 14px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+}
+
+.filter-section__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.filter-section__label-row .filter-section__label {
+  margin-bottom: 0;
 }
 
 .filter-section__label {
@@ -723,32 +772,18 @@ html, body, #root {
 /* ── Mobile adjustments ────────────────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-  /* Desktop has room for a permanent left-side panel instead of a bottom sheet. */
+  /* Desktop has room for a permanent left-side panel instead of a top bar. */
+  .app {
+    flex-direction: row;
+  }
+
   .filter-sidebar {
-    top: 0;
-    left: 0;
-    right: auto;
-    bottom: auto;
-    height: 100%;
-    max-height: none;
     width: var(--sidebar-width);
-    border-radius: 0;
-    transform: translateX(0);
-    box-shadow: 2px 0 12px rgba(0,0,0,0.3);
-  }
-
-  .filter-sidebar__close,
-  .filter-sidebar__grabber {
-    display: none;
-  }
-
-  .map-filter-trigger {
-    display: none;
-  }
-
-  .map-container {
-    left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
+    max-height: none;
+    overflow-y: auto;
+    border-bottom: none;
+    border-right: 1px solid var(--color-sidebar-border);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
   }
 
   .last-updated {

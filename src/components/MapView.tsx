@@ -26,13 +26,16 @@ const WANT_TO_GO_OPACITY = 0.75;
 
 interface Props {
   places: Place[];
-  onMenuClick: () => void;
+  isAdmin: boolean;
+  onEdit: (p: Place) => void;
 }
 
 interface MarkerWithInfoProps {
   place: Place;
   selected: boolean;
   onSelect: (p: Place | null) => void;
+  isAdmin: boolean;
+  onEdit: (p: Place) => void;
 }
 
 function placeType(p: Place): PlaceType {
@@ -57,7 +60,7 @@ function pinIconUrl(type: PlaceType): string {
   return url;
 }
 
-function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
+function MarkerWithInfo({ place, selected, onSelect, isAdmin, onEdit }: MarkerWithInfoProps) {
   const [markerRef, marker] = useMarkerRef();
   const type = placeType(place);
 
@@ -79,7 +82,16 @@ function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
       {selected && marker && (
         <InfoWindow anchor={marker} onCloseClick={() => onSelect(null)}>
           <div className="info-window">
-            <div className="info-window__name">{place.name}</div>
+            <div className="info-window__row">
+              <div className="info-window__name">{place.name}</div>
+              {isAdmin && (
+                <button className="list-row__edit" onClick={() => onEdit(place)} aria-label={`Edit ${place.name}`}>
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M11.5 2.5l2 2L5 13l-2.5.5.5-2.5 8.5-8.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+                  </svg>
+                </button>
+              )}
+            </div>
 
             <div className="info-window__facts">
               {[
@@ -185,7 +197,7 @@ function useVisiblePlaces(places: Place[]): Place[] {
   }, [places, bounds]);
 }
 
-function Markers({ places }: { places: Place[] }) {
+function Markers({ places, isAdmin, onEdit }: { places: Place[]; isAdmin: boolean; onEdit: (p: Place) => void }) {
   const [selected, setSelected] = useState<Place | null>(null);
   const visible = useVisiblePlaces(places);
 
@@ -197,26 +209,21 @@ function Markers({ places }: { places: Place[] }) {
           place={p}
           selected={selected?.id === p.id}
           onSelect={setSelected}
+          isAdmin={isAdmin}
+          onEdit={onEdit}
         />
       ))}
     </>
   );
 }
 
-export default function MapView({ places, onMenuClick }: Props) {
+export default function MapView({ places, isAdmin, onEdit }: Props) {
   const center = useInitialCenter();
 
   if (!center) return null; // resolving geolocation (capped at 5s by the timeout above)
 
   return (
     <div className="map-container">
-      <button className="map-filter-trigger" onClick={onMenuClick} aria-label="Open filters">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 4h12M4.5 8h7M7 12h2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-        </svg>
-        Filters
-      </button>
-
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <GoogleMap
           defaultCenter={center}
@@ -228,7 +235,7 @@ export default function MapView({ places, onMenuClick }: Props) {
           clickableIcons={false}
           style={{ width: '100%', height: '100%' }}
         >
-          <Markers places={places} />
+          <Markers places={places} isAdmin={isAdmin} onEdit={onEdit} />
         </GoogleMap>
       </APIProvider>
     </div>

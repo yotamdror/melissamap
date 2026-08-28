@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react';
 import type { Place, PlaceType } from '../types';
 
 interface Props {
-  onAdded: (place: Place) => void;
+  editing: Place | null;
+  onSaved: (place: Place) => void;
 }
 
 const TYPES: { key: PlaceType; label: string }[] = [
@@ -11,12 +12,19 @@ const TYPES: { key: PlaceType; label: string }[] = [
   { key: 'snacks', label: 'Snacks & Dessert' },
 ];
 
-export default function AddPlaceForm({ onAdded }: Props) {
-  const [name, setName] = useState('');
-  const [types, setTypes] = useState<PlaceType[]>([]);
-  const [neighborhood, setNeighborhood] = useState('');
-  const [notes, setNotes] = useState('');
-  const [hasBeenTo, setHasBeenTo] = useState(false);
+export default function AddPlaceForm({ editing, onSaved }: Props) {
+  const [name, setName] = useState(editing?.name ?? '');
+  const [types, setTypes] = useState<PlaceType[]>(() => {
+    if (!editing) return [];
+    const t: PlaceType[] = [];
+    if (editing.isRestaurant) t.push('restaurant');
+    if (editing.isBar) t.push('bar');
+    if (editing.isSnacksDessert) t.push('snacks');
+    return t;
+  });
+  const [neighborhood, setNeighborhood] = useState(editing?.neighborhood ?? '');
+  const [notes, setNotes] = useState(editing?.notes ?? '');
+  const [hasBeenTo, setHasBeenTo] = useState(editing?.hasBeenTo ?? false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,6 +45,9 @@ export default function AddPlaceForm({ onAdded }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          id: editing?.id,
+          originalName: editing?.name,
+          originalNeighborhood: editing?.neighborhood,
           name: name.trim(),
           isRestaurant: types.includes('restaurant'),
           isBar: types.includes('bar'),
@@ -48,10 +59,10 @@ export default function AddPlaceForm({ onAdded }: Props) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? 'Failed to add place');
+        throw new Error(body.error ?? 'Failed to save place');
       }
       const place: Place = await res.json();
-      onAdded(place);
+      onSaved(place);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
@@ -104,10 +115,12 @@ export default function AddPlaceForm({ onAdded }: Props) {
       {error && <div className="add-place-form__error">{error}</div>}
 
       <button className="add-place-form__submit" type="submit" disabled={loading}>
-        {loading ? 'Adding…' : 'Add place'}
+        {loading ? 'Saving…' : editing ? 'Save changes' : 'Add place'}
       </button>
       <p className="add-place-form__hint">
-        Saves to the Google Sheet and shows on your map now. Everyone else sees it after the next sync.
+        {editing
+          ? "Updates the Google Sheet and your map now. Everyone else sees it after the next sync."
+          : 'Saves to the Google Sheet and shows on your map now. Everyone else sees it after the next sync.'}
       </p>
     </form>
   );

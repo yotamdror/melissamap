@@ -3,14 +3,14 @@ import type { Filters, PlaceType } from '../types';
 import { shortCuisineLabel } from '../lib/cuisineLabel';
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
   filters: Filters;
   onChange: (f: Filters) => void;
   cuisines: string[];
   cuisineType: Record<string, PlaceType>;
   neighborhoods: string[];
   defaultFilters: Filters;
+  view: 'map' | 'list';
+  onViewChange: (v: 'map' | 'list') => void;
 }
 
 const TYPES: { key: PlaceType; label: string }[] = [
@@ -209,14 +209,14 @@ function TokenSearch({
 }
 
 export default function FilterSidebar({
-  open,
-  onClose,
   filters,
   onChange,
   cuisines,
   cuisineType,
   neighborhoods,
   defaultFilters,
+  view,
+  onViewChange,
 }: Props) {
   function toggleType(type: PlaceType) {
     const types = filters.types.includes(type)
@@ -251,16 +251,26 @@ export default function FilterSidebar({
   const moreFiltersDefaultOpen = moreFiltersParts.length > 0;
 
   return (
-    <aside className={`filter-sidebar${open ? ' filter-sidebar--open' : ''}`}>
-      <div className="filter-sidebar__grabber" />
-      <div className="filter-sidebar__header">
-        <span className="filter-sidebar__title">Filters</span>
-        <button className="filter-sidebar__close" onClick={onClose} aria-label="Close">×</button>
-      </div>
-
+    <aside className="filter-sidebar">
       <div className="filter-sidebar__body">
         <div>
-          <div className="filter-section__label">Category</div>
+          <div className="filter-section__label-row">
+            <div className="filter-section__label">Category</div>
+            <div className="view-toggle">
+              <button
+                className={`view-toggle__option${view === 'map' ? ' view-toggle__option--active' : ''}`}
+                onClick={() => onViewChange('map')}
+              >
+                Map
+              </button>
+              <button
+                className={`view-toggle__option${view === 'list' ? ' view-toggle__option--active' : ''}`}
+                onClick={() => onViewChange('list')}
+              >
+                List
+              </button>
+            </div>
+          </div>
           <div className="filter-toggle-group">
             {TYPES.map(({ key, label }) => (
               <button

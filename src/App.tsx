@@ -4,6 +4,7 @@ import MapView from './components/MapView';
 import ListView from './components/ListView';
 import FilterSidebar from './components/FilterSidebar';
 import LastUpdated from './components/LastUpdated';
+import PlaceFormModal from './components/PlaceFormModal';
 import type { PlacesData, Filters, Place } from './types';
 import { isOpenNow } from './lib/openNow';
 
@@ -61,8 +62,9 @@ export default function App() {
   const [role, setRole] = useState<'admin' | 'viewer' | null | undefined>(undefined);
   const [data, setData] = useState<PlacesData | null>(null);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [view, setView] = useState<'map' | 'list'>('map');
+  // null = closed, 'new' = add form, a Place = editing that place
+  const [formTarget, setFormTarget] = useState<Place | 'new' | null>(null);
 
   useEffect(() => {
     fetch('/api/verify')
@@ -78,14 +80,23 @@ export default function App() {
     }
   }, [role]);
 
-  function addPlace(place: Place) {
-    setData(d => d && { ...d, places: [...d.places, place] });
+  function upsertPlace(place: Place) {
+    setData(d => {
+      if (!d) return d;
+      const exists = d.places.some(p => p.id === place.id);
+      return {
+        ...d,
+        places: exists ? d.places.map(p => (p.id === place.id ? place : p)) : [...d.places, place],
+      };
+    });
+    setFormTarget(null);
   }
 
   if (role === undefined) return null;
   if (!role) return <PasswordGate onSuccess={setRole} />;
   if (!data) return null;
 
+  const isAdmin = role === 'admin';
   const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
   const filtered = applyFilters(mappablePlaces, filters);
   const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
@@ -113,34 +124,38 @@ export default function App() {
   return (
     <div className="app">
       <FilterSidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
         filters={filters}
         onChange={setFilters}
         cuisines={cuisines}
         cuisineType={cuisineType}
         neighborhoods={neighborhoods}
         defaultFilters={DEFAULT_FILTERS}
+        view={view}
+        onViewChange={setView}
       />
-      {view === 'map' ? (
-        <MapView
-          places={filtered}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
-      ) : (
-        <ListView
-          places={filtered}
-          onMenuClick={() => setSidebarOpen(true)}
-          isAdmin={role === 'admin'}
-          onPlaceAdded={addPlace}
+      <div className="app__content">
+        {view === 'map' ? (
+          <MapView
+            places={filtered}
+            isAdmin={isAdmin}
+            onEdit={setFormTarget}
+          />
+        ) : (
+          <ListView
+            places={filtered}
+            isAdmin={isAdmin}
+            onAddRequest={() => setFormTarget('new')}
+            onEditRequest={setFormTarget}
+          />
+        )}
+      </div>
+      {formTarget && (
+        <PlaceFormModal
+          editing={formTarget === 'new' ? null : formTarget}
+          onClose={() => setFormTarget(null)}
+          onSaved={upsertPlace}
         />
       )}
-      <button
-        className="view-toggle"
-        onClick={() => setView(v => (v === 'map' ? 'list' : 'map'))}
-      >
-        {view === 'map' ? 'List' : 'Map'}
-      </button>
       <LastUpdated date={data.lastUpdated} />
     </div>
   );

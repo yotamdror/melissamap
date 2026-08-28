@@ -39,7 +39,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 
-  const { name, isRestaurant, isBar, isSnacksDessert, neighborhood, notes, hasBeenTo } = req.body ?? {};
+  const {
+    id: existingId, originalName, originalNeighborhood,
+    name, isRestaurant, isBar, isSnacksDessert, neighborhood, notes, hasBeenTo,
+  } = req.body ?? {};
   if (!name || typeof name !== 'string') {
     return res.status(400).json({ error: 'Name is required' });
   }
@@ -50,36 +53,62 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const city = 'New York City';
   const apiKey = process.env.GOOGLE_MAPS_API_KEY!;
 
-  // 1. Append to the Sheet first - it's the durable source of truth. If this
-  // fails, nothing else should happen.
   const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON!);
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
   const sheets = google.sheets({ version: 'v4', auth });
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: 'RestaurantList!A:I',
-    valueInputOption: 'USER_ENTERED',
-    insertDataOption: 'INSERT_ROWS',
-    requestBody: {
-      values: [[
-        name,
-        hasBeenTo ? 'y' : '',
-        isRestaurant ? 'y' : '',
-        isSnacksDessert ? 'y' : '',
-        isBar ? 'y' : '',
-        notes || '',
-        neighborhood || '',
-        '',
-        city,
-      ]],
-    },
-  });
+
+  const rowValues = [
+    name,
+    hasBeenTo ? 'y' : '',
+    isRestaurant ? 'y' : '',
+    isSnacksDessert ? 'y' : '',
+    isBar ? 'y' : '',
+    notes || '',
+    neighborhood || '',
+    '',
+    city,
+  ];
+
+  // Editing an existing place updates its row in place; adding a new one
+  // appends. The Sheet write happens first and is the durable source of
+  // truth - if it fails, nothing else should happen.
+  if (originalName) {
+    const existing = await sheets.spreadsheets.values.get({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: 'RestaurantList!A2:G',
+    });
+    const rows = existing.data.values ?? [];
+    // Match on name + neighborhood, same compound key the id disambiguation
+    // in scripts/sync.ts uses - exact-name matching alone would misfire for
+    // the (rare) case of two different-neighborhood places sharing a name.
+    const rowIndex = rows.findIndex(
+      r => r[0] === originalName && (r[6] ?? '') === (originalNeighborhood ?? ''),
+    );
+    if (rowIndex === -1) {
+      return res.status(404).json({ error: 'Could not find the original row to update' });
+    }
+    const sheetRow = rowIndex + 2; // +1 for header, +1 for 0-index -> 1-index
+    await sheets.spreadsheets.values.update({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: `RestaurantList!A${sheetRow}:I${sheetRow}`,
+      valueInputOption: 'USER_ENTERED',
+      requestBody: { values: [rowValues] },
+    });
+  } else {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: process.env.GOOGLE_SHEET_ID,
+      range: 'RestaurantList!A:I',
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      requestBody: { values: [rowValues] },
+    });
+  }
 
   const base: Place = {
-    id: rowToId(name),
+    id: existingId || rowToId(name),
     name,
     hasBeenTo: !!hasBeenTo,
     isRestaurant: !!isRestaurant,
