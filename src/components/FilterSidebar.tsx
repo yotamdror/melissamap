@@ -184,7 +184,7 @@ export default function FilterSidebar({
             <input
               className="filter-bar__input"
               type="search"
-              placeholder="Name, neighborhood, or cuisine"
+              placeholder="Name, area, cuisine"
               value={filters.search}
               onChange={e => onChange({ ...filters, search: e.target.value })}
               onFocus={() => setSearchFocused(true)}
@@ -223,11 +223,8 @@ export default function FilterSidebar({
           </div>
 
           <button className="filter-bar__settings" onClick={() => setSheetOpen(true)} aria-label="More filters">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-              <circle cx="5.5" cy="4" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
-              <circle cx="10.5" cy="8" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
-              <circle cx="7" cy="12" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M1.5 2.5h13L9.5 8.5v4.2l-3 1.6V8.5L1.5 2.5z" />
             </svg>
             {chips.length > 0 && <span className="filter-bar__badge">{chips.length}</span>}
           </button>
