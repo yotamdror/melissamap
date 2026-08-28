@@ -38,43 +38,35 @@ const COL = {
   CITY: 8,
 } as const;
 
-// Specific cuisine/dish types - checked first, since these are what makes a
-// place actually findable by "italian", "sushi", "bbq", etc.
-const SPECIFIC_CUISINE_TYPES = new Set([
-  'italian_restaurant', 'chinese_restaurant', 'japanese_restaurant',
-  'mexican_restaurant', 'indian_restaurant', 'french_restaurant',
-  'american_restaurant', 'thai_restaurant', 'mediterranean_restaurant',
-  'greek_restaurant', 'korean_restaurant', 'vietnamese_restaurant',
-  'middle_eastern_restaurant', 'sushi_restaurant', 'pizza_restaurant',
-  'ramen_restaurant', 'burger_restaurant', 'seafood_restaurant',
-  'steakhouse', 'vegetarian_restaurant', 'vegan_restaurant',
-  'barbecue_restaurant', 'spanish_restaurant', 'turkish_restaurant',
-  'lebanese_restaurant', 'brazilian_restaurant', 'caribbean_restaurant',
-  'cuban_restaurant', 'ethiopian_restaurant', 'indonesian_restaurant',
-]);
-
-// Generic venue-format types - only used as a fallback when no specific
-// cuisine type is present, so they don't bury the real cuisine.
-const GENERIC_VENUE_TYPES = new Set([
-  'bakery', 'cafe', 'bar', 'wine_bar', 'cocktail_bar',
-  'dessert_shop', 'ice_cream_shop', 'deli', 'sandwich_shop',
-  'brunch_restaurant', 'breakfast_restaurant',
+// Types that convey no specific/useful information about what a place
+// actually is - everything else Google returns (cuisines, dish types, venue
+// formats like "bakery"/"bar") is kept. A denylist beats a hand-maintained
+// allowlist here: an allowlist silently drops anything we forgot to list
+// (verified: it missed "chocolate_shop", "hamburger_restaurant" typo'd as
+// "burger_restaurant"), while a denylist only needs to be right about the
+// handful of types that are always uninformative.
+const GENERIC_FILLER_TYPES = new Set([
+  'establishment', 'point_of_interest', 'food', 'restaurant', 'store', 'food_store',
 ]);
 
 function humanize(type: string): string {
   return type.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-// Returns the display cuisine (prefers specific over generic) and every
-// matched tag (for search - "italian" should match even if the display
-// badge ended up showing something else).
-function extractCuisine(types: string[]): { cuisine?: string; cuisineTags: string[] } {
-  const specific = types.filter(t => SPECIFIC_CUISINE_TYPES.has(t));
-  const generic = types.filter(t => GENERIC_VENUE_TYPES.has(t));
-  const cuisine = specific[0] ?? generic[0];
+// Returns the display cuisine (prefers Google's own primaryType when it's
+// specific) and every non-generic tag (for search - "italian" should match
+// even if the display badge ended up showing something else).
+function extractCuisine(
+  types: string[],
+  primaryType?: string,
+): { cuisine?: string; cuisineTags: string[] } {
+  const specific = types.filter(t => !GENERIC_FILLER_TYPES.has(t));
+  const cuisine = primaryType && !GENERIC_FILLER_TYPES.has(primaryType)
+    ? primaryType
+    : specific[0];
   return {
     cuisine: cuisine ? humanize(cuisine) : undefined,
-    cuisineTags: [...specific, ...generic].map(humanize),
+    cuisineTags: specific.map(humanize),
   };
 }
 
@@ -101,13 +93,33 @@ async function readSheet(): Promise<string[][]> {
   return (response.data.values ?? []) as string[][];
 }
 
-async function fetchRichTypes(placeId: string, apiKey: string): Promise<string[]> {
+interface RichDetails {
+  types: string[];
+  primaryType?: string;
+  rating?: number;
+  ratingCount?: number;
+}
+
+async function fetchRichDetails(placeId: string, apiKey: string): Promise<RichDetails> {
   const res = await fetch(`https://places.googleapis.com/v1/places/${placeId}`, {
-    headers: { 'X-Goog-Api-Key': apiKey, 'X-Goog-FieldMask': 'types' },
+    headers: {
+      'X-Goog-Api-Key': apiKey,
+      'X-Goog-FieldMask': 'types,primaryType,rating,userRatingCount',
+    },
   });
-  if (!res.ok) return [];
-  const data = (await res.json()) as { types?: string[] };
-  return data.types ?? [];
+  if (!res.ok) return { types: [] };
+  const data = (await res.json()) as {
+    types?: string[];
+    primaryType?: string;
+    rating?: number;
+    userRatingCount?: number;
+  };
+  return {
+    types: data.types ?? [],
+    primaryType: data.primaryType,
+    rating: data.rating,
+    ratingCount: data.userRatingCount,
+  };
 }
 
 async function enrichPlace(
@@ -153,8 +165,9 @@ async function enrichPlace(
 
   // The legacy Details `types` field rarely carries cuisine granularity (e.g. a
   // pizza place just comes back as ["restaurant", "food", ...]). Places API
-  // (New) has a much richer type taxonomy - use it for cuisine specifically.
-  const richTypes = await fetchRichTypes(candidate.place_id, apiKey);
+  // (New) has a much richer type taxonomy, plus rating data the legacy call
+  // doesn't return here - fetch both in one request.
+  const rich = await fetchRichDetails(candidate.place_id, apiKey);
   const periods: OpenPeriod[] = (detail.opening_hours?.periods ?? [])
     .filter(p => p.open && p.close)
     .map(p => ({
@@ -164,7 +177,8 @@ async function enrichPlace(
     }));
 
   const { cuisine, cuisineTags } = extractCuisine(
-    richTypes.length ? richTypes : (detail.types ?? []),
+    rich.types.length ? rich.types : (detail.types ?? []),
+    rich.primaryType,
   );
 
   return {
@@ -177,6 +191,8 @@ async function enrichPlace(
     priceLevel: detail.price_level as 1 | 2 | 3 | 4 | undefined,
     openPeriods: periods.length ? periods : undefined,
     weekdayHours: detail.opening_hours?.weekday_text ?? undefined,
+    googleRating: rich.rating,
+    googleRatingCount: rich.ratingCount,
   };
 }
 

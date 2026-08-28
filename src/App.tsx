@@ -11,7 +11,9 @@ const DEFAULT_FILTERS: Filters = {
   visited: 'all',
   priceLevel: [1, 2, 3, 4],
   openNow: false,
+  includeUnknownHours: true,
   borough: '',
+  cuisine: [],
   search: '',
 };
 
@@ -28,11 +30,17 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
 
     if (p.priceLevel && !filters.priceLevel.includes(p.priceLevel)) return false;
 
-    if (filters.openNow && p.openPeriods) {
-      if (!isOpenNow(p.openPeriods)) return false;
+    if (filters.openNow) {
+      if (p.openPeriods) {
+        if (!isOpenNow(p.openPeriods)) return false;
+      } else if (!filters.includeUnknownHours) {
+        return false;
+      }
     }
 
     if (filters.borough && p.borough !== filters.borough) return false;
+
+    if (filters.cuisine.length && !filters.cuisine.includes(p.cuisine ?? '')) return false;
 
     if (filters.search) {
       const q = filters.search.toLowerCase();
@@ -72,6 +80,7 @@ export default function App() {
   const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
   const filtered = applyFilters(mappablePlaces, filters);
   const boroughs = [...new Set(data.places.map(p => p.borough).filter(Boolean))].sort();
+  const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
 
   return (
     <div className="app">
@@ -85,6 +94,7 @@ export default function App() {
         filters={filters}
         onChange={setFilters}
         boroughs={boroughs}
+        cuisines={cuisines}
         defaultFilters={DEFAULT_FILTERS}
       />
       <MapView

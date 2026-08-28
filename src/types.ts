@@ -25,6 +25,8 @@ export interface Place {
   // All matched cuisine/type tags (searchable), not just the display cuisine
   cuisineTags?: string[];
   priceLevel?: 1 | 2 | 3 | 4;
+  googleRating?: number;
+  googleRatingCount?: number;
   openPeriods?: OpenPeriod[];
   weekdayHours?: string[];
 }
@@ -41,6 +43,8 @@ export interface Filters {
   visited: 'all' | 'been' | 'want';
   priceLevel: number[];
   openNow: boolean;
+  includeUnknownHours: boolean;
   borough: string;
+  cuisine: string[];
   search: string;
 }
