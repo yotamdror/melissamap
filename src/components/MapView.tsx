@@ -210,8 +210,11 @@ export default function MapView({ places, onMenuClick }: Props) {
 
   return (
     <div className="map-container">
-      <button className="map-menu-btn" onClick={onMenuClick} aria-label="Open filters">
-        <span /><span /><span />
+      <button className="map-filter-trigger" onClick={onMenuClick} aria-label="Open filters">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 4h12M4.5 8h7M7 12h2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+        Filters
       </button>
 
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>

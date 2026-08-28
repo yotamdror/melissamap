@@ -25,6 +25,12 @@ const PRICE_LEVELS = [
   { value: 4, label: '$$$$' },
 ];
 
+const STATUS_OPTIONS: { value: Filters['visited']; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'been', label: 'Visited' },
+  { value: 'want', label: 'Want to try' },
+];
+
 // Colloquial/cultural terms people actually type that don't match Google's
 // formal cuisine taxonomy at all as strings (no synonym-matching algorithm
 // bridges "jewish" -> "israeli" - only a curated mapping can). Expand this
@@ -42,11 +48,70 @@ const CUISINE_SYNONYMS: Record<string, string[]> = {
   boba: ['Taiwanese Restaurant'],
 };
 
-// One box does both jobs: it live-filters by free text (name/notes/neighborhood/
-// cuisine) on every keystroke same as before, and if what you've typed matches a
-// known cuisine (directly or via a curated synonym), it also offers that as a
-// suggestion - picking it locks in an exact cuisine filter (shown as a removable
-// chip, colored by the type it predominantly belongs to) and clears the query.
+// A collapsed section that opens on tap and shows a one-line summary of its
+// current value when closed - progressive disclosure instead of showing
+// every control at once.
+function Disclosure({
+  label,
+  summary,
+  defaultOpen,
+  children,
+}: {
+  label: string;
+  summary?: string;
+  defaultOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="disclosure">
+      <button className="disclosure__header" onClick={() => setOpen(o => !o)}>
+        <span className="disclosure__label">{label}</span>
+        <span className="disclosure__meta">
+          {summary && <span className="disclosure__summary">{summary}</span>}
+          <svg
+            className={`disclosure__chevron${open ? ' disclosure__chevron--open' : ''}`}
+            width="10" height="10" viewBox="0 0 10 10" fill="none"
+          >
+            <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      </button>
+      {open && <div className="disclosure__content">{children}</div>}
+    </div>
+  );
+}
+
+function SegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+}: {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="segmented-control">
+      {options.map(o => (
+        <button
+          key={o.value}
+          className={`segmented-control__option${value === o.value ? ' segmented-control__option--active' : ''}`}
+          onClick={() => onChange(o.value)}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// One token field does both jobs: it live-filters by free text (name/notes/
+// neighborhood/cuisine) on every keystroke same as before, and if what you've
+// typed matches a known cuisine (directly or via a curated synonym), it also
+// offers that as a suggestion - picking it locks in an exact cuisine filter
+// (shown as a removable chip inside the same field, colored by the type it
+// predominantly belongs to) and clears the query.
 function SearchAndCuisine({
   search,
   onSearchChange,
@@ -88,37 +153,32 @@ function SearchAndCuisine({
     : [];
 
   return (
-    <div className="cuisine-picker">
-      {selectedCuisines.length > 0 && (
-        <div className="cuisine-picker__tags">
-          {selectedCuisines.map(c => (
-            <button
-              key={c}
-              className={`cuisine-picker__tag cuisine-picker__tag--${cuisineType[c] ?? 'restaurant'}`}
-              onClick={() => onCuisinesChange(selectedCuisines.filter(x => x !== c))}
-            >
-              {shortCuisineLabel(c)} <span aria-hidden="true">×</span>
-            </button>
-          ))}
-        </div>
-      )}
-      <input
-        className="filter-search"
-        type="search"
-        placeholder="Name, notes, neighborhood, cuisine…"
-        value={search}
-        onChange={e => onSearchChange(e.target.value)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setTimeout(() => setFocused(false), 150)}
-      />
-      <div className="cuisine-picker__hint">
-        Filters as you type · pick a suggestion to add a cuisine filter
+    <div className="token-field">
+      <div className={`token-field__box${focused ? ' token-field__box--focused' : ''}`}>
+        {selectedCuisines.map(c => (
+          <button
+            key={c}
+            className={`token-field__tag token-field__tag--${cuisineType[c] ?? 'restaurant'}`}
+            onClick={() => onCuisinesChange(selectedCuisines.filter(x => x !== c))}
+          >
+            {shortCuisineLabel(c)} <span aria-hidden="true">×</span>
+          </button>
+        ))}
+        <input
+          className="token-field__input"
+          type="search"
+          placeholder={selectedCuisines.length ? '' : 'Name, notes, neighborhood, cuisine…'}
+          value={search}
+          onChange={e => onSearchChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setTimeout(() => setFocused(false), 150)}
+        />
       </div>
       {focused && suggestions.length > 0 && (
-        <div className="cuisine-picker__suggestions">
+        <div className="token-field__suggestions">
           {suggestions.map(c => (
             // onMouseDown (not onClick) fires before the input's onBlur closes this list
-            <button key={c} className="cuisine-picker__suggestion" onMouseDown={() => onSelectCuisine(c)}>
+            <button key={c} className="token-field__suggestion" onMouseDown={() => onSelectCuisine(c)}>
               {shortCuisineLabel(c)}
             </button>
           ))}
@@ -151,8 +211,19 @@ export default function FilterSidebar({
     onChange({ ...filters, priceLevel });
   }
 
+  // Always show the current value, even when it's the default - a collapsed
+  // row you can't read is worse than one that's always open.
+  const statusSummary = STATUS_OPTIONS.find(o => o.value === filters.visited)?.label;
+  const priceSummary = filters.priceLevel.length === 4
+    ? 'All'
+    : filters.priceLevel.length === 0
+      ? 'None'
+      : [...filters.priceLevel].sort().map(l => '$'.repeat(l)).join(' ');
+  const openNowSummary = filters.openNow ? 'On' : 'Off';
+
   return (
     <aside className={`filter-sidebar${open ? ' filter-sidebar--open' : ''}`}>
+      <div className="filter-sidebar__grabber" />
       <div className="filter-sidebar__header">
         <span className="filter-sidebar__title">Filters</span>
         <button className="filter-sidebar__close" onClick={onClose} aria-label="Close">×</button>
@@ -183,23 +254,15 @@ export default function FilterSidebar({
           />
         </div>
 
-        <div>
-          <div className="filter-section__label">Status</div>
-          <div className="filter-toggle-group">
-            {(['all', 'been', 'want'] as const).map(v => (
-              <button
-                key={v}
-                className={`filter-toggle${filters.visited === v ? ' filter-toggle--active' : ''}`}
-                onClick={() => onChange({ ...filters, visited: v })}
-              >
-                {v === 'all' ? 'All' : v === 'been' ? 'Visited' : 'Want to try'}
-              </button>
-            ))}
-          </div>
-        </div>
+        <Disclosure label="Status" summary={statusSummary} defaultOpen={filters.visited !== 'all'}>
+          <SegmentedControl
+            options={STATUS_OPTIONS}
+            value={filters.visited}
+            onChange={visited => onChange({ ...filters, visited })}
+          />
+        </Disclosure>
 
-        <div>
-          <div className="filter-section__label">Price</div>
+        <Disclosure label="Price" summary={priceSummary} defaultOpen={filters.priceLevel.length < 4}>
           <div className="filter-toggle-group">
             {PRICE_LEVELS.map(({ value, label }) => (
               <button
@@ -211,9 +274,9 @@ export default function FilterSidebar({
               </button>
             ))}
           </div>
-        </div>
+        </Disclosure>
 
-        <div>
+        <Disclosure label="Open now" summary={openNowSummary} defaultOpen={filters.openNow}>
           <div className="filter-switch-row">
             <span>Open now</span>
             <label className="filter-switch">
@@ -238,7 +301,7 @@ export default function FilterSidebar({
               </label>
             </div>
           )}
-        </div>
+        </Disclosure>
 
         <button
           className="filter-reset"

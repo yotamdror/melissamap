@@ -115,31 +115,29 @@ html, body, #root {
   inset: 0;
 }
 
-.map-menu-btn {
+/* Bottom-anchored, matching the direction the filter sheet rises from -
+   naturally sits under the sheet's higher z-index once it's open, so it
+   needs no extra visibility logic. */
+.map-filter-trigger {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
-  width: 44px;
-  height: 44px;
-  background: white;
-  border: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.map-menu-btn span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: #1c1c1e;
-  border-radius: 2px;
+  gap: 6px;
+  padding: 11px 20px;
+  background: rgba(28, 28, 30, 0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  color: white;
+  border: 0.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* ── Marker pins ───────────────────────────────────────────────────────────── */
@@ -241,7 +239,11 @@ html, body, #root {
   bottom: 0;
   max-height: 60vh;
   width: 100%;
-  background: var(--color-sidebar-bg);
+  background: rgba(28, 28, 30, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -256,11 +258,20 @@ html, body, #root {
   transform: translateY(0);
 }
 
+.filter-sidebar__grabber {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 10px auto 0;
+  flex-shrink: 0;
+}
+
 .filter-sidebar__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 20px 0;
+  padding: 14px 20px 0;
 }
 
 .filter-sidebar__title {
@@ -294,21 +305,6 @@ html, body, #root {
   color: var(--color-sidebar-muted);
   margin-bottom: 10px;
 }
-
-.filter-search {
-  width: 100%;
-  padding: 11px 14px;
-  background: var(--color-sidebar-input);
-  border: 1px solid var(--color-sidebar-border);
-  border-radius: 10px;
-  color: var(--color-sidebar-text);
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.filter-search::placeholder { color: var(--color-sidebar-muted); }
-.filter-search:focus { border-color: var(--color-accent); }
 
 .filter-toggle-group {
   display: flex;
@@ -344,45 +340,63 @@ html, body, #root {
 .filter-toggle--bar.filter-toggle--active        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
 .filter-toggle--snacks.filter-toggle--active      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
 
-.cuisine-picker {
+/* ── Token field (search + cuisine chips, one bordered field) ────────────────── */
+
+.token-field {
   position: relative;
   margin-top: 10px;
 }
 
-.cuisine-picker__tags {
+.token-field__box {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
-  margin-bottom: 8px;
+  padding: 8px 10px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 10px;
+  transition: border-color 0.15s;
 }
 
-.cuisine-picker__tag {
+.token-field__box--focused {
+  border-color: var(--color-accent);
+}
+
+.token-field__tag {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 10px;
+  padding: 4px 9px;
   border-radius: 20px;
-  border: 1px solid var(--color-accent);
-  background: var(--color-accent);
+  border: none;
   color: white;
   font-size: 13px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 /* Cuisine chips are colored by whichever type they predominantly belong to,
    reinforcing the existing restaurant/bar/snack color system rather than
    introducing an unrelated 4th color. */
-.cuisine-picker__tag--restaurant { border-color: var(--color-restaurant); background: var(--color-restaurant); color: white; }
-.cuisine-picker__tag--bar        { border-color: var(--color-bar); background: var(--color-bar); color: white; }
-.cuisine-picker__tag--snacks     { border-color: var(--color-snack); background: var(--color-snack); color: #1c1c1e; }
+.token-field__tag--restaurant { background: var(--color-restaurant); }
+.token-field__tag--bar        { background: var(--color-bar); }
+.token-field__tag--snacks     { background: var(--color-snack); color: #1c1c1e; }
 
-.cuisine-picker__hint {
-  font-size: 11px;
-  color: var(--color-sidebar-muted);
-  margin-top: 5px;
+.token-field__input {
+  flex: 1;
+  min-width: 80px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-sidebar-text);
+  font-size: 15px;
+  padding: 3px 0;
 }
 
-.cuisine-picker__suggestions {
+.token-field__input::placeholder { color: var(--color-sidebar-muted); }
+
+.token-field__suggestions {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
@@ -395,7 +409,7 @@ html, body, #root {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-.cuisine-picker__suggestion {
+.token-field__suggestion {
   display: block;
   width: 100%;
   text-align: left;
@@ -407,8 +421,84 @@ html, body, #root {
   cursor: pointer;
 }
 
-.cuisine-picker__suggestion:hover {
+.token-field__suggestion:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Disclosure (collapsible section) ─────────────────────────────────────── */
+
+.disclosure__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.disclosure__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-sidebar-muted);
+}
+
+.disclosure__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-sidebar-muted);
+}
+
+.disclosure__summary {
+  font-size: 13px;
+  color: var(--color-sidebar-text);
+}
+
+.disclosure__chevron {
+  transition: transform 0.2s ease;
+}
+
+.disclosure__chevron--open {
+  transform: rotate(180deg);
+}
+
+.disclosure__content {
+  margin-top: 12px;
+}
+
+/* ── Segmented control (single-select, e.g. Status) ───────────────────────── */
+
+.segmented-control {
+  display: flex;
+  gap: 2px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 10px;
+  padding: 2px;
+}
+
+.segmented-control__option {
+  flex: 1;
+  padding: 7px 8px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--color-sidebar-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.segmented-control__option--active {
+  background: var(--color-sidebar-text);
+  color: var(--color-sidebar-bg);
+  font-weight: 600;
 }
 
 .filter-switch-row {
@@ -519,11 +609,12 @@ html, body, #root {
     box-shadow: 2px 0 12px rgba(0,0,0,0.3);
   }
 
-  .filter-sidebar__close {
+  .filter-sidebar__close,
+  .filter-sidebar__grabber {
     display: none;
   }
 
-  .map-menu-btn {
+  .map-filter-trigger {
     display: none;
   }
 
