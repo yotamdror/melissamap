@@ -38,8 +38,13 @@ export default function PasswordGate({ onSuccess }: Props) {
   return (
     <div className="password-gate">
       <form className="password-gate__card" onSubmit={handleSubmit}>
-        <h1 className="password-gate__title">MelissaMap</h1>
-        <p className="password-gate__subtitle">NYC's best spots, curated.</p>
+        <div className="password-gate__collage">
+          <img src="/leo/leo-2.jpg" alt="Leo the dog in a cone, very proud of it" className="password-gate__photo password-gate__photo--1" />
+          <img src="/leo/leo-1.jpg" alt="Leo the dog looking distinguished" className="password-gate__photo password-gate__photo--2" />
+          <img src="/leo/leo-3.jpg" alt="Leo the dog wearing crocheted goat horns and a beard" className="password-gate__photo password-gate__photo--3" />
+        </div>
+        <h1 className="password-gate__title">Melissa Map 🗺️</h1>
+        <p className="password-gate__subtitle">built by her amazing husband, so he doesn't have to keep updating it manually</p>
         <input
           className="password-gate__input"
           type="password"
