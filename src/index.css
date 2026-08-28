@@ -166,8 +166,8 @@ html, body, #root {
 /* ── Info window ───────────────────────────────────────────────────────────── */
 
 .info-window {
-  min-width: 200px;
-  max-width: 260px;
+  min-width: 220px;
+  max-width: 290px;
   font-family: var(--font);
 }
 
@@ -175,42 +175,43 @@ html, body, #root {
   font-size: 15px;
   font-weight: 700;
   color: #1c1c1e;
+  margin-bottom: 3px;
+}
+
+.info-window__facts {
+  font-size: 13px;
+  color: #3a3a3c;
+  margin-bottom: 5px;
+}
+
+.info-window__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #636366;
   margin-bottom: 4px;
 }
 
-.info-window__meta {
-  font-size: 12px;
-  color: #636366;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
+.info-window__neighborhood {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .info-window__badge {
   background: #f2f2f7;
   padding: 2px 7px;
   border-radius: 10px;
-}
-
-.info-window__rating {
-  font-size: 13px;
-  color: #3a3a3c;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.info-window__rating-count {
-  color: #8e8e93;
+  flex-shrink: 0;
 }
 
 .info-window__rating-link {
-  margin-left: auto;
   color: #007aff;
   text-decoration: none;
   font-size: 12px;
+  flex-shrink: 0;
 }
 
 .info-window__rating-link:hover {
@@ -221,12 +222,7 @@ html, body, #root {
   font-size: 13px;
   color: #3a3a3c;
   line-height: 1.4;
-}
-
-.info-window__hours {
-  font-size: 12px;
-  color: #636366;
-  margin-top: 6px;
+  margin-top: 2px;
 }
 
 .info-window__hours--unknown {
@@ -372,6 +368,7 @@ html, body, #root {
 
 .cuisine-picker {
   position: relative;
+  margin-top: 10px;
 }
 
 .cuisine-picker__tags {
@@ -393,6 +390,13 @@ html, body, #root {
   font-size: 13px;
   cursor: pointer;
 }
+
+/* Cuisine chips are colored by whichever type they predominantly belong to,
+   reinforcing the existing restaurant/bar/snack color system rather than
+   introducing an unrelated 4th color. */
+.cuisine-picker__tag--restaurant { border-color: var(--color-restaurant); background: var(--color-restaurant); color: white; }
+.cuisine-picker__tag--bar        { border-color: var(--color-bar); background: var(--color-bar); color: white; }
+.cuisine-picker__tag--snacks     { border-color: var(--color-snack); background: var(--color-snack); color: #1c1c1e; }
 
 .cuisine-picker__suggestions {
   position: absolute;

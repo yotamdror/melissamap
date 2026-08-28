@@ -82,6 +82,25 @@ export default function App() {
   const boroughs = [...new Set(data.places.map(p => p.borough).filter(Boolean))].sort();
   const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
 
+  // Color each cuisine chip by whichever type (restaurant/bar/snack) most of its
+  // places actually are, so cuisine chips reinforce the existing type colors
+  // instead of introducing an unrelated 4th color.
+  const cuisineType: Record<string, 'restaurant' | 'bar' | 'snacks'> = {};
+  for (const c of cuisines) {
+    const counts = { restaurant: 0, bar: 0, snacks: 0 };
+    for (const p of data.places) {
+      if (p.cuisine !== c) continue;
+      if (p.isBar) counts.bar++;
+      else if (p.isSnacksDessert) counts.snacks++;
+      else counts.restaurant++;
+    }
+    cuisineType[c] = counts.bar >= counts.restaurant && counts.bar >= counts.snacks
+      ? 'bar'
+      : counts.snacks >= counts.restaurant
+        ? 'snacks'
+        : 'restaurant';
+  }
+
   return (
     <div className="app">
       <div
@@ -95,6 +114,7 @@ export default function App() {
         onChange={setFilters}
         boroughs={boroughs}
         cuisines={cuisines}
+        cuisineType={cuisineType}
         defaultFilters={DEFAULT_FILTERS}
       />
       <MapView

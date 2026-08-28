@@ -40,11 +40,6 @@ function placeType(p: Place): PlaceType {
   return 'restaurant';
 }
 
-function PriceLabel({ level }: { level?: number }) {
-  if (!level) return null;
-  return <span>{'$'.repeat(level)}</span>;
-}
-
 // One SVG data URL per pin type, built once and reused for every marker of
 // that type - this is what keeps thousands of markers cheap to render as
 // plain google.maps.Marker icons instead of per-marker React DOM nodes.
@@ -84,45 +79,50 @@ function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
         <InfoWindow anchor={marker} onCloseClick={() => onSelect(null)}>
           <div className="info-window">
             <div className="info-window__name">{place.name}</div>
-            <div className="info-window__meta">
-              {place.cuisine && (
-                <span className="info-window__badge">{place.cuisine}</span>
-              )}
-              <PriceLabel level={place.priceLevel} />
-              {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
-              {place.neighborhood && <span>{place.neighborhood}</span>}
+
+            <div className="info-window__facts">
+              {[
+                place.cuisine,
+                place.priceLevel ? '$'.repeat(place.priceLevel) : null,
+                place.googleRating != null
+                  ? `★ ${place.googleRating.toFixed(1)}${place.googleRatingCount != null ? ` (${place.googleRatingCount.toLocaleString()})` : ''}`
+                  : null,
+              ].filter(Boolean).join('  ·  ')}
             </div>
-            {place.googleRating != null && (
-              <div className="info-window__rating">
-                <span>★ {place.googleRating.toFixed(1)}</span>
-                {place.googleRatingCount != null && (
-                  <span className="info-window__rating-count">
-                    ({place.googleRatingCount.toLocaleString()})
-                  </span>
-                )}
-                {place.placeId && (
-                  <a
-                    href={`https://www.google.com/maps/place/?q=place_id:${place.placeId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="info-window__rating-link"
-                  >
-                    Google reviews
-                  </a>
-                )}
+
+            {(place.neighborhood || place.hasBeenTo) && (
+              <div className="info-window__row">
+                <span className="info-window__neighborhood">{place.neighborhood}</span>
+                {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
               </div>
             )}
+
+            <div className="info-window__row">
+              {place.weekdayHours && place.weekdayHours.length > 0 ? (
+                <span className="info-window__hours">
+                  {place.weekdayHours[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]}
+                </span>
+              ) : (
+                <span className="info-window__hours info-window__hours--unknown">Hours unknown</span>
+              )}
+              {place.placeId && (
+                <a
+                  // Documented Google Maps URL scheme for linking to a specific
+                  // place by ID - the informal "?q=place_id:X" form gets mangled
+                  // (treated as literal search text) when the native Maps app
+                  // intercepts the link on mobile.
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.placeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="info-window__rating-link"
+                >
+                  Google reviews
+                </a>
+              )}
+            </div>
+
             {place.notes && (
               <div className="info-window__notes">{place.notes}</div>
-            )}
-            {place.weekdayHours && place.weekdayHours.length > 0 ? (
-              <div className="info-window__hours">
-                {place.weekdayHours[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]}
-              </div>
-            ) : (
-              <div className="info-window__hours info-window__hours--unknown">
-                Hours unknown
-              </div>
             )}
           </div>
         </InfoWindow>
