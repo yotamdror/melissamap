@@ -99,10 +99,6 @@ export default function App() {
 
   return (
     <div className="app">
-      <div
-        className={`filter-sidebar__overlay${sidebarOpen ? ' filter-sidebar__overlay--visible' : ''}`}
-        onClick={() => setSidebarOpen(false)}
-      />
       <FilterSidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

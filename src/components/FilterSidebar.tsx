@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Filters, PlaceType } from '../types';
+import { shortCuisineLabel } from '../lib/cuisineLabel';
 
 interface Props {
   open: boolean;
@@ -96,7 +97,7 @@ function SearchAndCuisine({
               className={`cuisine-picker__tag cuisine-picker__tag--${cuisineType[c] ?? 'restaurant'}`}
               onClick={() => onCuisinesChange(selectedCuisines.filter(x => x !== c))}
             >
-              {c} <span aria-hidden="true">×</span>
+              {shortCuisineLabel(c)} <span aria-hidden="true">×</span>
             </button>
           ))}
         </div>
@@ -115,7 +116,7 @@ function SearchAndCuisine({
           {suggestions.map(c => (
             // onMouseDown (not onClick) fires before the input's onBlur closes this list
             <button key={c} className="cuisine-picker__suggestion" onMouseDown={() => onSelectCuisine(c)}>
-              {c}
+              {shortCuisineLabel(c)}
             </button>
           ))}
         </div>

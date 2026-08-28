@@ -8,6 +8,7 @@ import {
   useMarkerRef,
 } from '@vis.gl/react-google-maps';
 import type { Place } from '../types';
+import { shortCuisineLabel } from '../lib/cuisineLabel';
 
 const NYC_CENTER = { lat: 40.7549, lng: -73.984 };
 
@@ -82,7 +83,7 @@ function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
 
             <div className="info-window__facts">
               {[
-                place.cuisine,
+                place.cuisine ? shortCuisineLabel(place.cuisine) : null,
                 place.priceLevel ? '$'.repeat(place.priceLevel) : null,
                 place.googleRating != null
                   ? `★ ${place.googleRating.toFixed(1)}${place.googleRatingCount != null ? ` (${place.googleRatingCount.toLocaleString()})` : ''}`
