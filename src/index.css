@@ -376,6 +376,12 @@ html, body, #root {
 .cuisine-picker__tag--bar        { border-color: var(--color-bar); background: var(--color-bar); color: white; }
 .cuisine-picker__tag--snacks     { border-color: var(--color-snack); background: var(--color-snack); color: #1c1c1e; }
 
+.cuisine-picker__hint {
+  font-size: 11px;
+  color: var(--color-sidebar-muted);
+  margin-top: 5px;
+}
+
 .cuisine-picker__suggestions {
   position: absolute;
   top: calc(100% + 4px);

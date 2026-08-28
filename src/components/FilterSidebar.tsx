@@ -111,6 +111,9 @@ function SearchAndCuisine({
         onFocus={() => setFocused(true)}
         onBlur={() => setTimeout(() => setFocused(false), 150)}
       />
+      <div className="cuisine-picker__hint">
+        Filters as you type · pick a suggestion to add a cuisine filter
+      </div>
       {focused && suggestions.length > 0 && (
         <div className="cuisine-picker__suggestions">
           {suggestions.map(c => (
