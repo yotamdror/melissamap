@@ -5,10 +5,11 @@ interface Props {
   editing: Place | null;
   onClose: () => void;
   onSaved: (place: Place) => void;
+  onDeleted: (place: Place) => void;
   neighborhoods: string[];
 }
 
-export default function PlaceFormModal({ editing, onClose, onSaved, neighborhoods }: Props) {
+export default function PlaceFormModal({ editing, onClose, onSaved, onDeleted, neighborhoods }: Props) {
   return (
     <div className="place-modal">
       <div className="place-modal__backdrop" onClick={onClose} />
@@ -17,7 +18,7 @@ export default function PlaceFormModal({ editing, onClose, onSaved, neighborhood
           <span className="filter-sidebar__title">{editing ? 'Edit place' : 'Add a place'}</span>
           <button className="filter-sidebar__close" onClick={onClose} aria-label="Close">×</button>
         </div>
-        <AddPlaceForm editing={editing} onSaved={onSaved} neighborhoods={neighborhoods} />
+        <AddPlaceForm editing={editing} onSaved={onSaved} onDeleted={onDeleted} neighborhoods={neighborhoods} />
       </div>
     </div>
   );

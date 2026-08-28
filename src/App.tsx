@@ -92,6 +92,11 @@ export default function App() {
     setFormTarget(null);
   }
 
+  function removePlace(place: Place) {
+    setData(d => (d ? { ...d, places: d.places.filter(p => p.id !== place.id) } : d));
+    setFormTarget(null);
+  }
+
   if (role === undefined) return null;
   if (!role) return <PasswordGate onSuccess={setRole} />;
   if (!data) return null;
@@ -155,6 +160,7 @@ export default function App() {
           editing={formTarget === 'new' ? null : formTarget}
           onClose={() => setFormTarget(null)}
           onSaved={upsertPlace}
+          onDeleted={removePlace}
           neighborhoods={neighborhoods}
         />
       )}

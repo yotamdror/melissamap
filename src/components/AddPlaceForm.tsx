@@ -5,6 +5,7 @@ import { matchesQuery } from '../lib/matchesQuery';
 interface Props {
   editing: Place | null;
   onSaved: (place: Place) => void;
+  onDeleted: (place: Place) => void;
   neighborhoods: string[];
 }
 
@@ -14,7 +15,7 @@ const TYPES: { key: PlaceType; label: string }[] = [
   { key: 'snacks', label: 'Snacks & Dessert' },
 ];
 
-export default function AddPlaceForm({ editing, onSaved, neighborhoods }: Props) {
+export default function AddPlaceForm({ editing, onSaved, onDeleted, neighborhoods }: Props) {
   const [name, setName] = useState(editing?.name ?? '');
   const [types, setTypes] = useState<PlaceType[]>(() => {
     if (!editing) return [];
@@ -30,6 +31,8 @@ export default function AddPlaceForm({ editing, onSaved, neighborhoods }: Props)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [neighborhoodFocused, setNeighborhoodFocused] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Suggest existing neighborhoods so a typo or slightly different phrasing
   // doesn't silently create a duplicate that fragments the filter list.
@@ -77,6 +80,28 @@ export default function AddPlaceForm({ editing, onSaved, neighborhoods }: Props)
       setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!editing) return;
+    setDeleting(true);
+    setError('');
+    try {
+      const res = await fetch('/api/delete-place', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editing.name, neighborhood: editing.neighborhood }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? 'Failed to delete place');
+      }
+      onDeleted(editing);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.');
+      setDeleting(false);
+      setConfirmingDelete(false);
     }
   }
 
@@ -155,6 +180,26 @@ export default function AddPlaceForm({ editing, onSaved, neighborhoods }: Props)
           ? "Updates the Google Sheet and your map now. Everyone else sees it after the next sync."
           : 'Saves to the Google Sheet and shows on your map now. Everyone else sees it after the next sync.'}
       </p>
+
+      {editing && (
+        confirmingDelete ? (
+          <div className="add-place-form__delete-confirm">
+            <span>Delete "{editing.name}"? This removes it from the sheet.</span>
+            <div className="add-place-form__delete-confirm-actions">
+              <button type="button" className="add-place-form__cancel" onClick={() => setConfirmingDelete(false)} disabled={deleting}>
+                Cancel
+              </button>
+              <button type="button" className="add-place-form__delete" onClick={handleDelete} disabled={deleting}>
+                {deleting ? 'Deleting…' : 'Yes, delete'}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" className="add-place-form__delete-trigger" onClick={() => setConfirmingDelete(true)}>
+            Delete place
+          </button>
+        )
+      )}
     </form>
   );
 }
