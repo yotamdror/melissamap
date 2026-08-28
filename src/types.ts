@@ -44,7 +44,6 @@ export interface Filters {
   priceLevel: number[];
   openNow: boolean;
   includeUnknownHours: boolean;
-  borough: string;
   cuisine: string[];
   search: string;
 }

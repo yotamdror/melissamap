@@ -6,7 +6,6 @@ interface Props {
   onClose: () => void;
   filters: Filters;
   onChange: (f: Filters) => void;
-  boroughs: string[];
   cuisines: string[];
   cuisineType: Record<string, PlaceType>;
   defaultFilters: Filters;
@@ -130,7 +129,6 @@ export default function FilterSidebar({
   onClose,
   filters,
   onChange,
-  boroughs,
   cuisines,
   cuisineType,
   defaultFilters,
@@ -209,20 +207,6 @@ export default function FilterSidebar({
               </button>
             ))}
           </div>
-        </div>
-
-        <div>
-          <div className="filter-section__label">Borough</div>
-          <select
-            className="filter-select"
-            value={filters.borough}
-            onChange={e => onChange({ ...filters, borough: e.target.value })}
-          >
-            <option value="">All boroughs</option>
-            {boroughs.map(b => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
         </div>
 
         <div>

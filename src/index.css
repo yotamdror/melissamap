@@ -354,18 +354,6 @@ html, body, #root {
 .filter-toggle--bar.filter-toggle--active        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
 .filter-toggle--snacks.filter-toggle--active      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
 
-.filter-select {
-  width: 100%;
-  padding: 11px 14px;
-  background: var(--color-sidebar-input);
-  border: 1px solid var(--color-sidebar-border);
-  border-radius: 10px;
-  color: var(--color-sidebar-text);
-  font-size: 15px;
-  outline: none;
-  appearance: none;
-}
-
 .cuisine-picker {
   position: relative;
   margin-top: 10px;

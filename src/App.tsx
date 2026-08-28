@@ -12,7 +12,6 @@ const DEFAULT_FILTERS: Filters = {
   priceLevel: [1, 2, 3, 4],
   openNow: false,
   includeUnknownHours: true,
-  borough: '',
   cuisine: [],
   search: '',
 };
@@ -37,8 +36,6 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
         return false;
       }
     }
-
-    if (filters.borough && p.borough !== filters.borough) return false;
 
     if (filters.cuisine.length && !filters.cuisine.includes(p.cuisine ?? '')) return false;
 
@@ -79,7 +76,6 @@ export default function App() {
 
   const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
   const filtered = applyFilters(mappablePlaces, filters);
-  const boroughs = [...new Set(data.places.map(p => p.borough).filter(Boolean))].sort();
   const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
 
   // Color each cuisine chip by whichever type (restaurant/bar/snack) most of its
@@ -112,7 +108,6 @@ export default function App() {
         onClose={() => setSidebarOpen(false)}
         filters={filters}
         onChange={setFilters}
-        boroughs={boroughs}
         cuisines={cuisines}
         cuisineType={cuisineType}
         defaultFilters={DEFAULT_FILTERS}

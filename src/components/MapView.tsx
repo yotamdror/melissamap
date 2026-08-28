@@ -220,6 +220,7 @@ export default function MapView({ places, onMenuClick }: Props) {
           mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
           disableDefaultUI={false}
+          mapTypeControl={false}
           clickableIcons={false}
           style={{ width: '100%', height: '100%' }}
         >
