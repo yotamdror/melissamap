@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Filters, PlaceType } from '../types';
 import { shortCuisineLabel } from '../lib/cuisineLabel';
+import { matchesQuery } from '../lib/matchesQuery';
 
 interface Props {
   filters: Filters;
@@ -49,18 +50,6 @@ const CUISINE_SYNONYMS: Record<string, string[]> = {
   noodles: ['Ramen Restaurant', 'Chinese Noodle Restaurant', 'Vietnamese Restaurant'],
   boba: ['Taiwanese Restaurant'],
 };
-
-// Word-boundary prefix match, not "contains anywhere" - otherwise "it" would
-// suggest "City Park" (C-it-y) and "Non Profit Organization" (Prof-it). Checks
-// both a whole-string prefix (so "ice cream" matches "Ice Cream Shop") and any
-// single word's start (so "bar" matches "Cocktail Bar", not just names
-// beginning with "Bar").
-function matchesQuery(value: string, query: string): boolean {
-  const q = query.toLowerCase().trim();
-  const v = value.toLowerCase();
-  if (v.startsWith(q)) return true;
-  return v.split(/\s+/).some(word => word.startsWith(q));
-}
 
 interface Suggestion {
   label: string;

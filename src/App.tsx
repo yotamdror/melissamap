@@ -155,6 +155,7 @@ export default function App() {
           editing={formTarget === 'new' ? null : formTarget}
           onClose={() => setFormTarget(null)}
           onSaved={upsertPlace}
+          neighborhoods={neighborhoods}
         />
       )}
       <LastUpdated date={data.lastUpdated} />

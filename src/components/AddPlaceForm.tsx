@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import type { Place, PlaceType } from '../types';
+import { matchesQuery } from '../lib/matchesQuery';
 
 interface Props {
   editing: Place | null;
   onSaved: (place: Place) => void;
+  neighborhoods: string[];
 }
 
 const TYPES: { key: PlaceType; label: string }[] = [
@@ -12,7 +14,7 @@ const TYPES: { key: PlaceType; label: string }[] = [
   { key: 'snacks', label: 'Snacks & Dessert' },
 ];
 
-export default function AddPlaceForm({ editing, onSaved }: Props) {
+export default function AddPlaceForm({ editing, onSaved, neighborhoods }: Props) {
   const [name, setName] = useState(editing?.name ?? '');
   const [types, setTypes] = useState<PlaceType[]>(() => {
     if (!editing) return [];
@@ -27,6 +29,14 @@ export default function AddPlaceForm({ editing, onSaved }: Props) {
   const [hasBeenTo, setHasBeenTo] = useState(editing?.hasBeenTo ?? false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [neighborhoodFocused, setNeighborhoodFocused] = useState(false);
+
+  // Suggest existing neighborhoods so a typo or slightly different phrasing
+  // doesn't silently create a duplicate that fragments the filter list.
+  const neighborhoodQuery = neighborhood.trim();
+  const neighborhoodSuggestions = neighborhoodQuery
+    ? neighborhoods.filter(n => n !== neighborhoodQuery && matchesQuery(n, neighborhoodQuery)).slice(0, 6)
+    : [];
 
   function toggleType(t: PlaceType) {
     setTypes(cur => (cur.includes(t) ? cur.filter(x => x !== t) : [...cur, t]));
@@ -91,12 +101,35 @@ export default function AddPlaceForm({ editing, onSaved }: Props) {
           </button>
         ))}
       </div>
-      <input
-        className="filter-search"
-        placeholder="Neighborhood"
-        value={neighborhood}
-        onChange={e => setNeighborhood(e.target.value)}
-      />
+      <div className="add-place-form__field">
+        <input
+          className="filter-search"
+          placeholder="Neighborhood"
+          value={neighborhood}
+          onChange={e => setNeighborhood(e.target.value)}
+          onFocus={() => setNeighborhoodFocused(true)}
+          onBlur={() => setTimeout(() => setNeighborhoodFocused(false), 150)}
+          autoComplete="off"
+        />
+        {neighborhoodFocused && neighborhoodSuggestions.length > 0 && (
+          <div className="token-field__suggestions">
+            {neighborhoodSuggestions.map(n => (
+              // onMouseDown (not onClick) fires before the input's onBlur closes this list
+              <button
+                key={n}
+                type="button"
+                className="token-field__suggestion"
+                onMouseDown={() => {
+                  setNeighborhood(n);
+                  setNeighborhoodFocused(false);
+                }}
+              >
+                <span className="token-field__suggestion-label">{n}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
       <textarea
         className="add-place-form__notes"
         placeholder="Notes (optional)"
