@@ -83,30 +83,6 @@ function Disclosure({
   );
 }
 
-function SegmentedControl<T extends string>({
-  options,
-  value,
-  onChange,
-}: {
-  options: { value: T; label: string }[];
-  value: T;
-  onChange: (v: T) => void;
-}) {
-  return (
-    <div className="segmented-control">
-      {options.map(o => (
-        <button
-          key={o.value}
-          className={`segmented-control__option${value === o.value ? ' segmented-control__option--active' : ''}`}
-          onClick={() => onChange(o.value)}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 interface Suggestion {
   label: string;
   kind: 'cuisine' | 'neighborhood';
@@ -213,9 +189,6 @@ function TokenSearch({
         onFocus={() => setFocused(true)}
         onBlur={() => setTimeout(() => setFocused(false), 150)}
       />
-      <div className="token-field__hint">
-        Filters as you type · pick a suggestion to add a cuisine or neighborhood filter
-      </div>
       {focused && suggestions.length > 0 && (
         <div className="token-field__suggestions">
           {suggestions.map(s => (
@@ -259,15 +232,23 @@ export default function FilterSidebar({
     onChange({ ...filters, priceLevel });
   }
 
-  // Always show the current value, even when it's the default - a collapsed
-  // row you can't read is worse than one that's always open.
+  // Only mention filters that are actually set to something non-default - an
+  // always-visible summary is less useful once it's several filters bundled
+  // into one row instead of one clean value per row.
   const statusSummary = STATUS_OPTIONS.find(o => o.value === filters.visited)?.label;
   const priceSummary = filters.priceLevel.length === 4
-    ? 'All'
+    ? undefined
     : filters.priceLevel.length === 0
-      ? 'None'
+      ? 'No prices'
       : [...filters.priceLevel].sort().map(l => '$'.repeat(l)).join(' ');
-  const openNowSummary = filters.openNow ? 'On' : 'Off';
+  const moreFiltersParts = [
+    filters.visited !== 'all' ? statusSummary : undefined,
+    priceSummary,
+    filters.openNow ? 'Open now' : undefined,
+    filters.hasNotes ? 'Has notes' : undefined,
+  ].filter(Boolean);
+  const moreFiltersSummary = moreFiltersParts.length ? moreFiltersParts.join(' · ') : undefined;
+  const moreFiltersDefaultOpen = moreFiltersParts.length > 0;
 
   return (
     <aside className={`filter-sidebar${open ? ' filter-sidebar--open' : ''}`}>
@@ -306,15 +287,21 @@ export default function FilterSidebar({
           />
         </div>
 
-        <Disclosure label="Status" summary={statusSummary} defaultOpen={filters.visited !== 'all'}>
-          <SegmentedControl
-            options={STATUS_OPTIONS}
-            value={filters.visited}
-            onChange={visited => onChange({ ...filters, visited })}
-          />
-        </Disclosure>
+        <Disclosure label="More filters" summary={moreFiltersSummary} defaultOpen={moreFiltersDefaultOpen}>
+          <div className="filter-section__label">Status</div>
+          <div className="filter-toggle-group">
+            {STATUS_OPTIONS.map(({ value, label }) => (
+              <button
+                key={value}
+                className={`filter-toggle${filters.visited === value ? ' filter-toggle--active' : ''}`}
+                onClick={() => onChange({ ...filters, visited: value })}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
-        <Disclosure label="Price" summary={priceSummary} defaultOpen={filters.priceLevel.length < 4}>
+          <div className="filter-section__label filter-section__label--spaced">Price</div>
           <div className="filter-toggle-group">
             {PRICE_LEVELS.map(({ value, label }) => (
               <button
@@ -326,20 +313,22 @@ export default function FilterSidebar({
               </button>
             ))}
           </div>
-        </Disclosure>
 
-        <Disclosure label="Open now" summary={openNowSummary} defaultOpen={filters.openNow}>
-          <div className="filter-switch-row">
-            <span>Open now</span>
-            <label className="filter-switch">
-              <input
-                type="checkbox"
-                checked={filters.openNow}
-                onChange={e => onChange({ ...filters, openNow: e.target.checked })}
-              />
-              <span className="filter-switch__track" />
-            </label>
+          <div className="filter-toggle-group filter-toggle-group--spaced">
+            <button
+              className={`filter-toggle${filters.openNow ? ' filter-toggle--active' : ''}`}
+              onClick={() => onChange({ ...filters, openNow: !filters.openNow })}
+            >
+              Open now
+            </button>
+            <button
+              className={`filter-toggle${filters.hasNotes ? ' filter-toggle--active' : ''}`}
+              onClick={() => onChange({ ...filters, hasNotes: !filters.hasNotes })}
+            >
+              Has notes
+            </button>
           </div>
+
           {filters.openNow && (
             <div className="filter-switch-row filter-switch-row--nested">
               <span>Include places with unknown hours</span>
@@ -353,20 +342,6 @@ export default function FilterSidebar({
               </label>
             </div>
           )}
-        </Disclosure>
-
-        <Disclosure label="Notes" summary={filters.hasNotes ? 'On' : 'Off'} defaultOpen={filters.hasNotes}>
-          <div className="filter-switch-row">
-            <span>Only show places with notes</span>
-            <label className="filter-switch">
-              <input
-                type="checkbox"
-                checked={filters.hasNotes}
-                onChange={e => onChange({ ...filters, hasNotes: e.target.checked })}
-              />
-              <span className="filter-switch__track" />
-            </label>
-          </div>
         </Disclosure>
 
         <button

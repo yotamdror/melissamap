@@ -306,10 +306,18 @@ html, body, #root {
   margin-bottom: 10px;
 }
 
+.filter-section__label--spaced {
+  margin-top: 16px;
+}
+
 .filter-toggle-group {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.filter-toggle-group--spaced {
+  margin-top: 16px;
 }
 
 .filter-toggle {
@@ -358,9 +366,9 @@ html, body, #root {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 10px;
+  padding: 7px 14px;
   border-radius: 20px;
-  border: none;
+  border: 1px solid transparent;
   color: white;
   font-size: 13px;
   cursor: pointer;
@@ -390,12 +398,6 @@ html, body, #root {
 
 .filter-search::placeholder { color: var(--color-sidebar-muted); }
 .filter-search--focused { border-color: var(--color-accent); }
-
-.token-field__hint {
-  font-size: 11px;
-  color: var(--color-sidebar-muted);
-  margin-top: 5px;
-}
 
 .token-field__suggestions {
   position: absolute;
@@ -477,36 +479,6 @@ html, body, #root {
 
 .disclosure__content {
   margin-top: 12px;
-}
-
-/* ── Segmented control (single-select, e.g. Status) ───────────────────────── */
-
-.segmented-control {
-  display: flex;
-  gap: 2px;
-  background: var(--color-sidebar-input);
-  border: 1px solid var(--color-sidebar-border);
-  border-radius: 10px;
-  padding: 2px;
-}
-
-.segmented-control__option {
-  flex: 1;
-  padding: 7px 8px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  color: var(--color-sidebar-muted);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.segmented-control__option--active {
-  background: var(--color-sidebar-text);
-  color: var(--color-sidebar-bg);
-  font-weight: 600;
 }
 
 .filter-switch-row {
