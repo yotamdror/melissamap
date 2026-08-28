@@ -596,16 +596,25 @@ html, body, #root {
   color: var(--color-sidebar-text);
 }
 
-.filter-toggle--active {
+/* :hover has higher specificity (class + pseudo-class) than a single class
+   like --active alone, so without this explicit :hover override, hovering
+   (or, on mobile, the lingering hover state after a tap) an active toggle
+   makes its text fall back to :hover's white - white text on --active's
+   white background. */
+.filter-toggle--active,
+.filter-toggle--active:hover {
   background: var(--color-sidebar-text);
   color: var(--color-sidebar-bg);
   border-color: var(--color-sidebar-text);
   font-weight: 600;
 }
 
-.filter-toggle--restaurant.filter-toggle--active { background: var(--color-restaurant); border-color: var(--color-restaurant); color: white; }
-.filter-toggle--bar.filter-toggle--active        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
-.filter-toggle--snacks.filter-toggle--active      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
+.filter-toggle--restaurant.filter-toggle--active,
+.filter-toggle--restaurant.filter-toggle--active:hover { background: var(--color-restaurant); border-color: var(--color-restaurant); color: white; }
+.filter-toggle--bar.filter-toggle--active,
+.filter-toggle--bar.filter-toggle--active:hover        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
+.filter-toggle--snacks.filter-toggle--active,
+.filter-toggle--snacks.filter-toggle--active:hover      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
 
 /* ── Active filter chips (in the slim bar) + suggestions dropdown ─────────────── */
 
@@ -663,6 +672,7 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   width: 100%;
   text-align: left;
   padding: 10px 14px;
@@ -677,7 +687,16 @@ html, body, #root {
   background: rgba(255, 255, 255, 0.08);
 }
 
+.token-field__suggestion-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .token-field__suggestion-kind {
+  flex-shrink: 0;
   font-size: 11px;
   color: var(--color-sidebar-muted);
 }

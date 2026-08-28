@@ -184,7 +184,7 @@ export default function FilterSidebar({
             <input
               className="filter-bar__input"
               type="search"
-              placeholder="Search or filter"
+              placeholder="Name, neighborhood, or cuisine"
               value={filters.search}
               onChange={e => onChange({ ...filters, search: e.target.value })}
               onFocus={() => setSearchFocused(true)}
@@ -199,7 +199,7 @@ export default function FilterSidebar({
                     className="token-field__suggestion"
                     onMouseDown={() => selectSuggestion(s)}
                   >
-                    <span>{s.kind === 'cuisine' ? shortCuisineLabel(s.label) : s.label}</span>
+                    <span className="token-field__suggestion-label">{s.kind === 'cuisine' ? shortCuisineLabel(s.label) : s.label}</span>
                     <span className="token-field__suggestion-kind">{s.kind === 'cuisine' ? 'Cuisine' : 'Neighborhood'}</span>
                   </button>
                 ))}
@@ -223,9 +223,11 @@ export default function FilterSidebar({
           </div>
 
           <button className="filter-bar__settings" onClick={() => setSheetOpen(true)} aria-label="More filters">
-            <svg width="17" height="17" viewBox="0 0 16 16" fill="none">
-              <path d="M8 1v2M8 13v2M2.5 4.5l1.4 1.4M12.1 10.1l1.4 1.4M1 8h2M13 8h2M2.5 11.5l1.4-1.4M12.1 5.9l1.4-1.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.3" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              <circle cx="5.5" cy="4" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
+              <circle cx="10.5" cy="8" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
+              <circle cx="7" cy="12" r="1.6" fill="var(--color-sidebar-input)" stroke="currentColor" strokeWidth="1.3" />
             </svg>
             {chips.length > 0 && <span className="filter-bar__badge">{chips.length}</span>}
           </button>
