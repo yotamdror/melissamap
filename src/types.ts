@@ -22,6 +22,8 @@ export interface Place {
   placeId?: string;
   address?: string;
   cuisine?: string;
+  // All matched cuisine/type tags (searchable), not just the display cuisine
+  cuisineTags?: string[];
   priceLevel?: 1 | 2 | 3 | 4;
   openPeriods?: OpenPeriod[];
   weekdayHours?: string[];

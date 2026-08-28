@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   APIProvider,
   Map,
@@ -64,9 +64,13 @@ function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
             {place.notes && (
               <div className="info-window__notes">{place.notes}</div>
             )}
-            {place.weekdayHours && place.weekdayHours.length > 0 && (
+            {place.weekdayHours && place.weekdayHours.length > 0 ? (
               <div className="info-window__hours">
                 {place.weekdayHours[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]}
+              </div>
+            ) : (
+              <div className="info-window__hours info-window__hours--unknown">
+                Hours unknown
               </div>
             )}
           </div>
@@ -76,8 +80,29 @@ function MarkerWithInfo({ place, selected, onSelect }: MarkerWithInfoProps) {
   );
 }
 
+function useInitialCenter() {
+  const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setCenter(NYC_CENTER);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => setCenter(NYC_CENTER), // denied, unavailable, or timed out
+      { timeout: 5000, maximumAge: 5 * 60 * 1000 },
+    );
+  }, []);
+
+  return center;
+}
+
 export default function MapView({ places, onMenuClick }: Props) {
   const [selected, setSelected] = useState<Place | null>(null);
+  const center = useInitialCenter();
+
+  if (!center) return null; // resolving geolocation (capped at 5s by the timeout above)
 
   return (
     <div className="map-container">
@@ -87,7 +112,7 @@ export default function MapView({ places, onMenuClick }: Props) {
 
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <Map
-          defaultCenter={NYC_CENTER}
+          defaultCenter={center}
           defaultZoom={13}
           mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"

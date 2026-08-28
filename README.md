@@ -8,10 +8,10 @@ MelissaMap is a password-protected webapp that turns a curated Google Sheet into
 
 ## Features
 
-- **Live map** — overlaid on your current location (mobile GPS + desktop geolocation)
+- **Live map** — centers on your current location via the browser Geolocation API (falls back to a fixed NYC center if permission is denied or unavailable)
 - **Filtered views** — toggle between Restaurants, Bars, and Snacks/Dessert
 - **"Been there" vs. "Want to go"** — color-coded pins based on visit history
-- **Search** — filter by neighborhood, borough, or free-text notes
+- **Search** — filter by name, notes, neighborhood, or cuisine
 - **Claude-powered search** *(planned)* — ask in natural language: "something cheap and Japanese near me"
 - **Password protected** — private by default; shared with trusted friends
 - **Mobile-first** — fast, tap-friendly, works great on iPhone
@@ -33,14 +33,14 @@ Backed by a Google Sheet with the following columns:
 
 The sheet is the source of truth — add a row, refresh the map.
 
-## Tech Stack *(planned)*
+## Tech Stack
 
 - **Frontend** — React + TypeScript, Vite
-- **Map** — Mapbox GL JS
-- **Data** — Google Sheets API (read-only)
-- **Auth** — simple shared password (JWT or session cookie)
-- **AI search** *(v2)* — Anthropic Claude API for natural-language filtering
-- **Hosting** — Vercel or Netlify (edge-optimized for mobile)
+- **Map** — Google Maps JavaScript API (`@vis.gl/react-google-maps`)
+- **Data** — Google Sheets API (read-only) + Google Places API for enrichment
+- **Auth** — shared password, JWT session cookie
+- **AI search** *(planned, v2)* — Anthropic Claude API for natural-language filtering
+- **Hosting** — Vercel
 
 ## Getting Started
 
@@ -63,15 +63,15 @@ npm run dev
 ## Roadmap
 
 ### v1
-- [ ] Google Sheet → map data pipeline (service account, read-only)
-- [ ] Google Places API enrichment — geocode each row for lat/lng; also pull cuisine, price level, and hours while we're there
-- [ ] Weekly cron job — syncs sheet → Places API → cached JSON; records `lastUpdated` timestamp
-- [ ] "Last updated" date shown in map UI
-- [ ] Map view with current-location overlay (Mapbox)
-- [ ] Filter sidebar — type (restaurant/bar/snack), cuisine, price ($–$$$$), open now, borough, visited vs. want-to-go
-- [ ] Text search on name and notes
-- [ ] Shared password gate (single password, JWT cookie)
-- [ ] Mobile layout polish
+- [x] Google Sheet → map data pipeline (service account, read-only)
+- [x] Google Places API enrichment — geocode each row for lat/lng; also pull cuisine, price level, and hours while we're there
+- [ ] Weekly cron job — GitHub Actions workflow + secrets are in place, not yet verified with a real run
+- [x] "Last updated" date shown in map UI
+- [x] Map view with current-location overlay (Google Maps, not Mapbox)
+- [x] Filter sidebar — type (restaurant/bar/snack), price ($–$$$$), open now, borough, visited vs. want-to-go
+- [x] Text search on name, notes, neighborhood, and cuisine
+- [ ] Shared password gate — built (JWT cookie), but not yet verified end-to-end in a real deployment (`vite dev` alone can't run the auth API routes)
+- [ ] Mobile layout polish — only checked in a desktop-browser phone-sized viewport so far, not a real device/Safari
 - [ ] Share a spot (deeplink to pin)
 
 ### v2

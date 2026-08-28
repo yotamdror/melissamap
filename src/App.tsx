@@ -36,7 +36,8 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
 
     if (filters.search) {
       const q = filters.search.toLowerCase();
-      const haystack = `${p.name} ${p.notes} ${p.neighborhood} ${p.cuisine ?? ''}`.toLowerCase();
+      const tags = (p.cuisineTags ?? []).join(' ');
+      const haystack = `${p.name} ${p.notes} ${p.neighborhood} ${p.cuisine ?? ''} ${tags}`.toLowerCase();
       if (!haystack.includes(q)) return false;
     }
 
@@ -58,7 +59,7 @@ export default function App() {
 
   useEffect(() => {
     if (authed) {
-      fetch('/data/places.json')
+      fetch('/api/places')
         .then(r => r.json())
         .then(setData);
     }

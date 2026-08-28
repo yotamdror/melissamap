@@ -145,11 +145,11 @@ html, body, #root {
 /* ── Marker pins ───────────────────────────────────────────────────────────── */
 
 .marker-pin {
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   border-radius: 50% 50% 50% 0;
   transform: rotate(-45deg);
-  border: 2px solid rgba(0,0,0,0.15);
+  border: 1.5px solid rgba(0,0,0,0.15);
   cursor: pointer;
   transition: transform 0.15s;
 }
@@ -203,6 +203,11 @@ html, body, #root {
   font-size: 12px;
   color: #636366;
   margin-top: 6px;
+}
+
+.info-window__hours--unknown {
+  color: #c9a227;
+  font-style: italic;
 }
 
 /* ── Filter sidebar ────────────────────────────────────────────────────────── */

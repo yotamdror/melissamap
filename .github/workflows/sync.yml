@@ -32,6 +32,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/places.json
+          git add data/places.json
           git diff --staged --quiet || git commit -m "chore: sync places data [skip ci]"
           git push
