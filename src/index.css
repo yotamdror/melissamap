@@ -14,7 +14,6 @@
   --color-sidebar-input: #2c2c2e;
   --color-sidebar-border: #3a3a3c;
   --color-accent: #FF6B6B;
-  --sidebar-width: 320px;
   --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -448,16 +447,97 @@ html, body, #root {
 
 /* ── Filter bar ────────────────────────────────────────────────────────────── */
 
-/* A persistent bar in normal document flow (not a modal/overlay) - it pushes
-   the map/list content down instead of floating over it, and looks and
-   behaves identically whichever view is active. */
-.filter-sidebar {
+/* A slim, always-visible bar - live search, a live result count, and (only
+   when non-empty) a row of removable chips for every active filter. Nothing
+   else about filtering is ever permanently on screen; Category/Status/
+   Price/etc. only appear once the settings icon opens the sheet below. */
+.filter-bar {
   flex-shrink: 0;
   width: 100%;
-  max-height: 45vh;
   background: rgba(28, 28, 30, 0.94);
   border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-  overflow-y: auto;
+  padding: 10px 16px;
+}
+
+.filter-bar__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-bar__search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-bar__search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-sidebar-muted);
+  pointer-events: none;
+}
+
+.filter-bar__input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 9px;
+  color: var(--color-sidebar-text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.filter-bar__input::placeholder { color: var(--color-sidebar-muted); }
+.filter-bar__input:focus { border-color: var(--color-accent); }
+
+.filter-bar__settings {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 9px;
+  color: var(--color-sidebar-text);
+  cursor: pointer;
+}
+
+.filter-bar__badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.filter-bar__count {
+  font-size: 12px;
+  color: var(--color-sidebar-muted);
+  margin-top: 8px;
+}
+
+.filter-bar__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .filter-sidebar__title {
@@ -474,24 +554,6 @@ html, body, #root {
   cursor: pointer;
   line-height: 1;
   padding: 4px;
-}
-
-.filter-sidebar__body {
-  padding: 14px 20px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.filter-section__label-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.filter-section__label-row .filter-section__label {
-  margin-bottom: 0;
 }
 
 .filter-section__label {
@@ -545,19 +607,7 @@ html, body, #root {
 .filter-toggle--bar.filter-toggle--active        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
 .filter-toggle--snacks.filter-toggle--active      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
 
-/* ── Token search (chips row, separate from the text field itself) ───────────── */
-
-.token-field {
-  position: relative;
-  margin-top: 10px;
-}
-
-.token-field__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
-}
+/* ── Active filter chips (in the slim bar) + suggestions dropdown ─────────────── */
 
 .token-field__tag {
   display: flex;
@@ -580,6 +630,7 @@ html, body, #root {
 .token-field__tag--bar          { background: var(--color-bar); }
 .token-field__tag--snacks       { background: var(--color-snack); color: #1c1c1e; }
 .token-field__tag--neighborhood { background: #5e5ce6; }
+.token-field__tag--neutral      { background: var(--color-sidebar-input); border-color: var(--color-sidebar-border); color: var(--color-sidebar-text); }
 
 .filter-search {
   width: 100%;
@@ -594,7 +645,6 @@ html, body, #root {
 }
 
 .filter-search::placeholder { color: var(--color-sidebar-muted); }
-.filter-search--focused { border-color: var(--color-accent); }
 
 .token-field__suggestions {
   position: absolute;
@@ -630,52 +680,6 @@ html, body, #root {
 .token-field__suggestion-kind {
   font-size: 11px;
   color: var(--color-sidebar-muted);
-}
-
-/* ── Disclosure (collapsible section) ─────────────────────────────────────── */
-
-.disclosure__header {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font: inherit;
-}
-
-.disclosure__label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-sidebar-muted);
-}
-
-.disclosure__meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--color-sidebar-muted);
-}
-
-.disclosure__summary {
-  font-size: 13px;
-  color: var(--color-sidebar-text);
-}
-
-.disclosure__chevron {
-  transition: transform 0.2s ease;
-}
-
-.disclosure__chevron--open {
-  transform: rotate(180deg);
-}
-
-.disclosure__content {
-  margin-top: 12px;
 }
 
 .filter-switch-row {
@@ -744,7 +748,10 @@ html, body, #root {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.15s;
-  margin-top: auto;
+}
+
+.filter-reset--spaced {
+  margin-top: 20px;
 }
 
 .filter-reset:hover {
@@ -769,23 +776,9 @@ html, body, #root {
   letter-spacing: 0.02em;
 }
 
-/* ── Mobile adjustments ────────────────────────────────────────────────────── */
+/* ── Desktop adjustments ───────────────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-  /* Desktop has room for a permanent left-side panel instead of a top bar. */
-  .app {
-    flex-direction: row;
-  }
-
-  .filter-sidebar {
-    width: var(--sidebar-width);
-    max-height: none;
-    overflow-y: auto;
-    border-bottom: none;
-    border-right: 1px solid var(--color-sidebar-border);
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.3);
-  }
-
   .last-updated {
     right: 16px;
   }

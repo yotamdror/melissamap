@@ -132,6 +132,7 @@ export default function App() {
         defaultFilters={DEFAULT_FILTERS}
         view={view}
         onViewChange={setView}
+        resultCount={filtered.length}
       />
       <div className="app__content">
         {view === 'map' ? (

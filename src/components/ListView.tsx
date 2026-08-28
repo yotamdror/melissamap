@@ -76,8 +76,6 @@ export default function ListView({ places, isAdmin, onAddRequest, onEditRequest 
           </button>
         )}
 
-        <div className="list-view__count">{places.length} places</div>
-
         {places.map(p => (
           <PlaceRow key={p.id} place={p} isAdmin={isAdmin} onEdit={onEditRequest} />
         ))}
