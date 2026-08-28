@@ -45,5 +45,7 @@ export interface Filters {
   openNow: boolean;
   includeUnknownHours: boolean;
   cuisine: string[];
+  neighborhood: string[];
+  hasNotes: boolean;
   search: string;
 }

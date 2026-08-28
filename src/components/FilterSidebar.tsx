@@ -9,6 +9,7 @@ interface Props {
   onChange: (f: Filters) => void;
   cuisines: string[];
   cuisineType: Record<string, PlaceType>;
+  neighborhoods: string[];
   defaultFilters: Filters;
 }
 
@@ -106,20 +107,30 @@ function SegmentedControl<T extends string>({
   );
 }
 
-// One token field does both jobs: it live-filters by free text (name/notes/
-// neighborhood/cuisine) on every keystroke same as before, and if what you've
-// typed matches a known cuisine (directly or via a curated synonym), it also
-// offers that as a suggestion - picking it locks in an exact cuisine filter
-// (shown as a removable chip inside the same field, colored by the type it
-// predominantly belongs to) and clears the query.
-function SearchAndCuisine({
+interface Suggestion {
+  label: string;
+  kind: 'cuisine' | 'neighborhood';
+}
+
+// Live-filters by free text (name/notes/neighborhood/cuisine) on every
+// keystroke same as before. If what's typed matches a known cuisine (directly
+// or via a curated synonym) or a neighborhood, it also offers that as a
+// suggestion - picking one locks in an exact filter (shown as a removable
+// chip in its own row, separate from the text field) and clears the query.
+// Chips live outside the input box on purpose - keeping them out of the field
+// you're actively typing in.
+function TokenSearch({
   search,
   onSearchChange,
   cuisines,
   cuisineType,
   selectedCuisines,
   onSelectCuisine,
-  onCuisinesChange,
+  onRemoveCuisine,
+  neighborhoods,
+  selectedNeighborhoods,
+  onSelectNeighborhood,
+  onRemoveNeighborhood,
 }: {
   search: string;
   onSearchChange: (v: string) => void;
@@ -127,7 +138,11 @@ function SearchAndCuisine({
   cuisineType: Record<string, PlaceType>;
   selectedCuisines: string[];
   onSelectCuisine: (c: string) => void;
-  onCuisinesChange: (v: string[]) => void;
+  onRemoveCuisine: (c: string) => void;
+  neighborhoods: string[];
+  selectedNeighborhoods: string[];
+  onSelectNeighborhood: (n: string) => void;
+  onRemoveNeighborhood: (n: string) => void;
 }) {
   const [focused, setFocused] = useState(false);
 
@@ -136,50 +151,82 @@ function SearchAndCuisine({
   // both a whole-string prefix (so "ice cream" matches "Ice Cream Shop") and any
   // single word's start (so "bar" matches "Cocktail Bar", not just names
   // beginning with "Bar").
-  function matchesQuery(cuisine: string, query: string): boolean {
+  function matchesQuery(value: string, query: string): boolean {
     const q = query.toLowerCase().trim();
-    const c = cuisine.toLowerCase();
-    if (c.startsWith(q)) return true;
-    return c.split(/\s+/).some(word => word.startsWith(q));
+    const v = value.toLowerCase();
+    if (v.startsWith(q)) return true;
+    return v.split(/\s+/).some(word => word.startsWith(q));
   }
 
   const q = search.trim().toLowerCase();
   const synonymMatches = q ? (CUISINE_SYNONYMS[q] ?? []).filter(c => cuisines.includes(c)) : [];
-  const directMatches = q ? cuisines.filter(c => matchesQuery(c, search)) : [];
-  const suggestions = q
-    ? [...new Set([...synonymMatches, ...directMatches])]
+  const cuisineMatches = q ? cuisines.filter(c => matchesQuery(c, search)) : [];
+  const cuisineSuggestions: Suggestion[] = q
+    ? [...new Set([...synonymMatches, ...cuisineMatches])]
         .filter(c => !selectedCuisines.includes(c))
-        .slice(0, 8)
+        .map(label => ({ label, kind: 'cuisine' as const }))
     : [];
+  const neighborhoodSuggestions: Suggestion[] = q
+    ? neighborhoods
+        .filter(n => matchesQuery(n, search) && !selectedNeighborhoods.includes(n))
+        .map(label => ({ label, kind: 'neighborhood' as const }))
+    : [];
+  const suggestions = [...cuisineSuggestions, ...neighborhoodSuggestions].slice(0, 8);
+
+  function selectSuggestion(s: Suggestion) {
+    if (s.kind === 'cuisine') onSelectCuisine(s.label);
+    else onSelectNeighborhood(s.label);
+  }
+
+  const hasTags = selectedCuisines.length > 0 || selectedNeighborhoods.length > 0;
 
   return (
     <div className="token-field">
-      <div className={`token-field__box${focused ? ' token-field__box--focused' : ''}`}>
-        {selectedCuisines.map(c => (
-          <button
-            key={c}
-            className={`token-field__tag token-field__tag--${cuisineType[c] ?? 'restaurant'}`}
-            onClick={() => onCuisinesChange(selectedCuisines.filter(x => x !== c))}
-          >
-            {shortCuisineLabel(c)} <span aria-hidden="true">×</span>
-          </button>
-        ))}
-        <input
-          className="token-field__input"
-          type="search"
-          placeholder={selectedCuisines.length ? '' : 'Name, notes, neighborhood, cuisine…'}
-          value={search}
-          onChange={e => onSearchChange(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setTimeout(() => setFocused(false), 150)}
-        />
+      {hasTags && (
+        <div className="token-field__tags">
+          {selectedCuisines.map(c => (
+            <button
+              key={`c-${c}`}
+              className={`token-field__tag token-field__tag--${cuisineType[c] ?? 'restaurant'}`}
+              onClick={() => onRemoveCuisine(c)}
+            >
+              {shortCuisineLabel(c)} <span aria-hidden="true">×</span>
+            </button>
+          ))}
+          {selectedNeighborhoods.map(n => (
+            <button
+              key={`n-${n}`}
+              className="token-field__tag token-field__tag--neighborhood"
+              onClick={() => onRemoveNeighborhood(n)}
+            >
+              {n} <span aria-hidden="true">×</span>
+            </button>
+          ))}
+        </div>
+      )}
+      <input
+        className={`filter-search${focused ? ' filter-search--focused' : ''}`}
+        type="search"
+        placeholder="Name, notes, neighborhood, cuisine…"
+        value={search}
+        onChange={e => onSearchChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setTimeout(() => setFocused(false), 150)}
+      />
+      <div className="token-field__hint">
+        Filters as you type · pick a suggestion to add a cuisine or neighborhood filter
       </div>
       {focused && suggestions.length > 0 && (
         <div className="token-field__suggestions">
-          {suggestions.map(c => (
+          {suggestions.map(s => (
             // onMouseDown (not onClick) fires before the input's onBlur closes this list
-            <button key={c} className="token-field__suggestion" onMouseDown={() => onSelectCuisine(c)}>
-              {shortCuisineLabel(c)}
+            <button
+              key={`${s.kind}-${s.label}`}
+              className="token-field__suggestion"
+              onMouseDown={() => selectSuggestion(s)}
+            >
+              <span>{s.kind === 'cuisine' ? shortCuisineLabel(s.label) : s.label}</span>
+              <span className="token-field__suggestion-kind">{s.kind === 'cuisine' ? 'Cuisine' : 'Neighborhood'}</span>
             </button>
           ))}
         </div>
@@ -195,6 +242,7 @@ export default function FilterSidebar({
   onChange,
   cuisines,
   cuisineType,
+  neighborhoods,
   defaultFilters,
 }: Props) {
   function toggleType(type: PlaceType) {
@@ -243,14 +291,18 @@ export default function FilterSidebar({
               </button>
             ))}
           </div>
-          <SearchAndCuisine
+          <TokenSearch
             search={filters.search}
             onSearchChange={search => onChange({ ...filters, search })}
             cuisines={cuisines}
             cuisineType={cuisineType}
             selectedCuisines={filters.cuisine}
             onSelectCuisine={c => onChange({ ...filters, cuisine: [...filters.cuisine, c], search: '' })}
-            onCuisinesChange={cuisine => onChange({ ...filters, cuisine })}
+            onRemoveCuisine={c => onChange({ ...filters, cuisine: filters.cuisine.filter(x => x !== c) })}
+            neighborhoods={neighborhoods}
+            selectedNeighborhoods={filters.neighborhood}
+            onSelectNeighborhood={n => onChange({ ...filters, neighborhood: [...filters.neighborhood, n], search: '' })}
+            onRemoveNeighborhood={n => onChange({ ...filters, neighborhood: filters.neighborhood.filter(x => x !== n) })}
           />
         </div>
 
@@ -301,6 +353,20 @@ export default function FilterSidebar({
               </label>
             </div>
           )}
+        </Disclosure>
+
+        <Disclosure label="Notes" summary={filters.hasNotes ? 'On' : 'Off'} defaultOpen={filters.hasNotes}>
+          <div className="filter-switch-row">
+            <span>Only show places with notes</span>
+            <label className="filter-switch">
+              <input
+                type="checkbox"
+                checked={filters.hasNotes}
+                onChange={e => onChange({ ...filters, hasNotes: e.target.checked })}
+              />
+              <span className="filter-switch__track" />
+            </label>
+          </div>
         </Disclosure>
 
         <button

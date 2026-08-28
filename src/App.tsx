@@ -13,6 +13,8 @@ const DEFAULT_FILTERS: Filters = {
   openNow: false,
   includeUnknownHours: true,
   cuisine: [],
+  neighborhood: [],
+  hasNotes: false,
   search: '',
 };
 
@@ -38,6 +40,10 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
     }
 
     if (filters.cuisine.length && !filters.cuisine.includes(p.cuisine ?? '')) return false;
+
+    if (filters.neighborhood.length && !filters.neighborhood.includes(p.neighborhood)) return false;
+
+    if (filters.hasNotes && !p.notes) return false;
 
     if (filters.search) {
       const q = filters.search.toLowerCase();
@@ -77,6 +83,7 @@ export default function App() {
   const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
   const filtered = applyFilters(mappablePlaces, filters);
   const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
+  const neighborhoods = [...new Set(data.places.map(p => p.neighborhood).filter(Boolean))].sort();
 
   // Color each cuisine chip by whichever type (restaurant/bar/snack) most of its
   // places actually are, so cuisine chips reinforce the existing type colors
@@ -106,6 +113,7 @@ export default function App() {
         onChange={setFilters}
         cuisines={cuisines}
         cuisineType={cuisineType}
+        neighborhoods={neighborhoods}
         defaultFilters={DEFAULT_FILTERS}
       />
       <MapView

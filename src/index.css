@@ -340,34 +340,25 @@ html, body, #root {
 .filter-toggle--bar.filter-toggle--active        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
 .filter-toggle--snacks.filter-toggle--active      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
 
-/* ── Token field (search + cuisine chips, one bordered field) ────────────────── */
+/* ── Token search (chips row, separate from the text field itself) ───────────── */
 
 .token-field {
   position: relative;
   margin-top: 10px;
 }
 
-.token-field__box {
+.token-field__tags {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 6px;
-  padding: 8px 10px;
-  background: var(--color-sidebar-input);
-  border: 1px solid var(--color-sidebar-border);
-  border-radius: 10px;
-  transition: border-color 0.15s;
-}
-
-.token-field__box--focused {
-  border-color: var(--color-accent);
+  margin-bottom: 8px;
 }
 
 .token-field__tag {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: 20px;
   border: none;
   color: white;
@@ -378,23 +369,33 @@ html, body, #root {
 
 /* Cuisine chips are colored by whichever type they predominantly belong to,
    reinforcing the existing restaurant/bar/snack color system rather than
-   introducing an unrelated 4th color. */
-.token-field__tag--restaurant { background: var(--color-restaurant); }
-.token-field__tag--bar        { background: var(--color-bar); }
-.token-field__tag--snacks     { background: var(--color-snack); color: #1c1c1e; }
+   introducing an unrelated 4th color. Neighborhood chips get their own
+   distinct neutral color since they filter on a different field entirely. */
+.token-field__tag--restaurant   { background: var(--color-restaurant); }
+.token-field__tag--bar          { background: var(--color-bar); }
+.token-field__tag--snacks       { background: var(--color-snack); color: #1c1c1e; }
+.token-field__tag--neighborhood { background: #5e5ce6; }
 
-.token-field__input {
-  flex: 1;
-  min-width: 80px;
-  background: transparent;
-  border: none;
-  outline: none;
+.filter-search {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--color-sidebar-input);
+  border: 1px solid var(--color-sidebar-border);
+  border-radius: 10px;
   color: var(--color-sidebar-text);
   font-size: 15px;
-  padding: 3px 0;
+  outline: none;
+  transition: border-color 0.15s;
 }
 
-.token-field__input::placeholder { color: var(--color-sidebar-muted); }
+.filter-search::placeholder { color: var(--color-sidebar-muted); }
+.filter-search--focused { border-color: var(--color-accent); }
+
+.token-field__hint {
+  font-size: 11px;
+  color: var(--color-sidebar-muted);
+  margin-top: 5px;
+}
 
 .token-field__suggestions {
   position: absolute;
@@ -410,7 +411,9 @@ html, body, #root {
 }
 
 .token-field__suggestion {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   text-align: left;
   padding: 10px 14px;
@@ -423,6 +426,11 @@ html, body, #root {
 
 .token-field__suggestion:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+.token-field__suggestion-kind {
+  font-size: 11px;
+  color: var(--color-sidebar-muted);
 }
 
 /* ── Disclosure (collapsible section) ─────────────────────────────────────── */
