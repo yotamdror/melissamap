@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from 'react';
 
 interface Props {
-  onSuccess: () => void;
+  onSuccess: (role: 'admin' | 'viewer') => void;
 }
 
 export default function PasswordGate({ onSuccess }: Props) {
@@ -22,7 +22,8 @@ export default function PasswordGate({ onSuccess }: Props) {
       });
 
       if (res.ok) {
-        onSuccess();
+        const { role } = await res.json();
+        onSuccess(role);
       } else {
         setError('Incorrect password.');
         setPassword('');

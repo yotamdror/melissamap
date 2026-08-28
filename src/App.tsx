@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import PasswordGate from './components/PasswordGate';
 import MapView from './components/MapView';
+import ListView from './components/ListView';
 import FilterSidebar from './components/FilterSidebar';
 import LastUpdated from './components/LastUpdated';
 import type { PlacesData, Filters, Place } from './types';
@@ -57,27 +58,32 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
 }
 
 export default function App() {
-  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [role, setRole] = useState<'admin' | 'viewer' | null | undefined>(undefined);
   const [data, setData] = useState<PlacesData | null>(null);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [view, setView] = useState<'map' | 'list'>('map');
 
   useEffect(() => {
     fetch('/api/verify')
-      .then(r => setAuthed(r.ok))
-      .catch(() => setAuthed(false));
+      .then(async r => setRole(r.ok ? (await r.json()).role : null))
+      .catch(() => setRole(null));
   }, []);
 
   useEffect(() => {
-    if (authed) {
+    if (role) {
       fetch('/api/places')
         .then(r => r.json())
         .then(setData);
     }
-  }, [authed]);
+  }, [role]);
 
-  if (authed === null) return null;
-  if (!authed) return <PasswordGate onSuccess={() => setAuthed(true)} />;
+  function addPlace(place: Place) {
+    setData(d => d && { ...d, places: [...d.places, place] });
+  }
+
+  if (role === undefined) return null;
+  if (!role) return <PasswordGate onSuccess={setRole} />;
   if (!data) return null;
 
   const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
@@ -116,10 +122,25 @@ export default function App() {
         neighborhoods={neighborhoods}
         defaultFilters={DEFAULT_FILTERS}
       />
-      <MapView
-        places={filtered}
-        onMenuClick={() => setSidebarOpen(true)}
-      />
+      {view === 'map' ? (
+        <MapView
+          places={filtered}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
+      ) : (
+        <ListView
+          places={filtered}
+          onMenuClick={() => setSidebarOpen(true)}
+          isAdmin={role === 'admin'}
+          onPlaceAdded={addPlace}
+        />
+      )}
+      <button
+        className="view-toggle"
+        onClick={() => setView(v => (v === 'map' ? 'list' : 'map'))}
+      >
+        {view === 'map' ? 'List' : 'Map'}
+      </button>
       <LastUpdated date={data.lastUpdated} />
     </div>
   );
