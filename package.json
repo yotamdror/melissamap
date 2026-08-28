@@ -1,6 +1,8 @@
 {
   "name": "melissamap",
   "version": "0.1.0",
+  "private": true,
+  "description": "A password-protected, interactive map of NYC restaurants, bars, and snack spots, backed by a Google Sheet and enriched via Google Places.",
   "type": "module",
   "scripts": {
     "dev": "vite",
