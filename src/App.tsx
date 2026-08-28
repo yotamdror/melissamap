@@ -66,7 +66,7 @@ export default function App() {
 
   useEffect(() => {
     fetch('/api/verify')
-      .then(async r => setRole(r.ok ? (await r.json()).role : null))
+      .then(async r => setRole(r.ok ? ((await r.json()).role ?? null) : null))
       .catch(() => setRole(null));
   }, []);
 
