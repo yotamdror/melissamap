@@ -1,6 +1,8 @@
 # Melissa Map
 
-My wife has kept a list of NYC restaurants for over a decade — places to try, places she's been and liked enough to keep. It started as a Google Doc, then we moved it to a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
+New York has something like 25,000 restaurants, and most of them aren't worth your time. My wife has spent over a decade sorting the good ones out of that pile — reading Eater, New York Magazine, the Times — and keeping a list of what's worth trying and what she's already vetted. It's still a big list. It's just curated, closer to a critic's beat than the crowdsourced grab-bag you get from Yelp or Google Maps.
+
+That list started as a Google Doc, then became a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
 
 Keeping the map in sync with the sheet was still on me, manually. I'd promised to do it once a month, ten minutes tops — I mostly didn't, unless Melissa bugged me. This automates that part: the sheet stays canonical, the map updates itself.
 
