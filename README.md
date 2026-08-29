@@ -1,6 +1,6 @@
 # Melissa Map
 
-New York has something like 25,000 restaurants, and most of them aren't worth your time. My wife has spent over a decade sorting the good ones out of that pile — reading Eater, New York Magazine, the Times — and keeping a list of what's worth trying and what she's already vetted. It's still a big list. It's just curated, closer to a critic's beat than the crowdsourced grab-bag you get from Yelp or Google Maps.
+NYC's Health Department inspects something like 28,000 restaurants a year, across all five boroughs — and that's before bars and bakeries. My wife has spent over a decade narrowing that down to about 2,100 places worth going to: reading Eater, New York Magazine, the Times, and keeping only what's actually good. It's still a big list. It's just curated — closer to a critic's beat than the crowdsourced grab-bag you get from Yelp or Google Maps.
 
 That list started as a Google Doc, then became a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
 
