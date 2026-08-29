@@ -1,6 +1,6 @@
 # Melissa Map
 
-NYC's Health Department inspects something like 28,000 restaurants a year, across all five boroughs — and that's before bars and bakeries. My wife has spent over a decade narrowing that down to about 2,100 places worth going to: reading Eater, New York Magazine, the Times, and keeping only what's actually good. It's still a big list. It's just curated — closer to a critic's beat than the crowdsourced grab-bag you get from Yelp or Google Maps.
+NYC's Health Department inspects something like 28,000 restaurants a year, across all five boroughs — and that's before bars and bakeries. My wife has spent over a decade narrowing that down to about 2,100 places worth going to: reading Eater, New York Magazine, the Times, and keeping only what's actually good. It's still a big list. It's just curated — closer to a critic's beat than the yellow pages Yelp and Google Maps have become, where everyone's listed and whoever pays floats to the top.
 
 That list started as a Google Doc, then became a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
 
