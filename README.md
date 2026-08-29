@@ -11,9 +11,9 @@ Keeping the map in sync was on me, manually — promised monthly, ten minutes to
 ## What it does
 
 - Centers on wherever you're standing, pins color-coded by category and visited status
-- Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
-- Admin can add, edit, delete a place right from the map, writing straight back to the sheet
-- Weekly sync re-enriches everything automatically
+- Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, with neighborhood autosuggest so near-duplicates don't fragment the list
+- Admin can add, edit, delete a place right from the map. It's enriched via the Places API in the same request, so it's on the map immediately, not after the next sync
+- Weekly sync re-enriches everything else automatically
 
 ## Data
 
