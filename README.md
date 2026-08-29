@@ -1,25 +1,21 @@
 # Melissa Map
 
-My wife has kept a running list of New York restaurants for over a decade — places she wants to try, places she's been and liked enough to keep. It started as a Google Doc. We moved it to a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd actually been. The list stayed accurate. Turning it into something useful while standing on a corner, hungry, in a specific neighborhood — that part stayed manual.
+My wife has kept a list of NYC restaurants for over a decade — places to try, places she's been and liked enough to keep. It started as a Google Doc, then we moved it to a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
 
-That's what this is. The Sheet is still the source of truth. Melissa Map reads it, enriches every row with real hours, ratings, and location from Google Places, and puts the whole thing on a map she can filter and search from her phone.
+Keeping the map in sync with the sheet was still on me, manually. I'd promised to do it once a month, ten minutes tops — I mostly didn't, unless Melissa bugged me. This automates that part: the sheet stays canonical, the map updates itself.
 
 **Live:** [melissamap.empirerecords.nyc](https://melissamap.empirerecords.nyc)
 
-## Why curated, not just search
-
-New York has more restaurants than anyone can evaluate, and most of what's near you on a generic map search isn't worth walking into. A decade of "been there, worth remembering" and "want to try" beats an unfiltered list — filtered by neighborhood, price, category, whether she's been, and whatever note she left herself. Adding a place is still just a row in the Sheet.
-
 ## What it does
 
-- Opens centered on wherever you're standing, pins color-coded by category and visited status
-- Filters by cuisine, neighborhood, price, open-now, and notes — a live-suggest search bar, not a form
-- Lets an admin add, edit, or delete a place right from the map, writing straight back to the Sheet
-- Re-enriches the full list weekly, so hours and ratings don't drift stale between edits
+- Centers on wherever you're standing, pins color-coded by category and visited status
+- Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
+- Admin can add, edit, delete a place right from the map, writing straight back to the sheet
+- Weekly sync re-enriches everything automatically
 
-## How the data flows
+## Data
 
-The Google Sheet is canonical. A weekly sync reads it, calls Google Places for each row, and writes the enriched data the app actually serves. An admin edit made from the map updates the Sheet and that session's view immediately; everyone else sees it after the next sync.
+Sheet's canonical. Weekly sync reads it, hits the Places API per row, writes what the app serves. Admin edits from the map update the sheet and that session immediately; everyone else sees it after the next sync. Since the sheet is the actual backend, this map is just one frontend on it — she's not locked into Google Maps, Yelp, or (god forbid) Foursquare to keep track of any of it.
 
 | Sheet column | Values |
 |---|---|
@@ -33,11 +29,11 @@ The Google Sheet is canonical. A weekly sync reads it, calls Google Places for e
 | Borough | e.g. Manhattan, Brooklyn |
 | City | e.g. New York City |
 
-## Under the hood
+## Stack
 
-React + TypeScript on Vite. Google Maps JS API for the map. Vercel serverless functions for the backend. Google Sheets + Places APIs for data. A JWT session cookie for the two roles, admin and viewer. Hosted on Vercel.
+React + TypeScript / Vite, Google Maps JS API, Vercel serverless, Google Sheets + Places APIs, JWT cookie auth (admin/viewer), hosted on Vercel.
 
-## Running it locally
+## Running locally
 
 ```bash
 git clone https://github.com/yotamdror/melissamap.git
@@ -49,7 +45,7 @@ cp .env.example .env
 
 `npm run dev` checks component structure and styling only — there are no `/api/*` routes, so auth fake-passes and place data 404s. Use `vercel dev` for the real thing: auth and the Sheets-backed API included.
 
-## What's next
+## Next
 
 - Natural-language search — "something cheap and Japanese near me"
 - A shareable link to a single pin
