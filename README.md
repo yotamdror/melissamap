@@ -1,35 +1,25 @@
 # Melissa Map
 
-A password-protected, interactive map of NYC restaurants, bars, and snack spots — curated in a Google Sheet, enriched with live data from Google Places, and browsable on the go.
+My wife has kept a running list of New York restaurants for over a decade — places she wants to try, places she's been and liked enough to keep. It started as a Google Doc. We moved it to a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd actually been. The list stayed accurate. Turning it into something useful while standing on a corner, hungry, in a specific neighborhood — that part stayed manual.
+
+That's what this is. The Sheet is still the source of truth. Melissa Map reads it, enriches every row with real hours, ratings, and location from Google Places, and puts the whole thing on a map she can filter and search from her phone.
 
 **Live:** [melissamap.empirerecords.nyc](https://melissamap.empirerecords.nyc)
 
-## What it is
+## Why curated, not just search
 
-Standing somewhere in NYC and hungry? Open Melissa Map, see what's nearby, filter by category/price/vibe, and go. Under the hood, a Google Sheet is the source of truth for the curated list — add a row there (or through the app itself, if you're an admin) and it's enriched with location, hours, rating, and cuisine automatically.
+New York has more restaurants than anyone can evaluate, and most of what's near you on a generic map search isn't worth walking into. A decade of "been there, worth remembering" and "want to try" beats an unfiltered list — filtered by neighborhood, price, category, whether she's been, and whatever note she left herself. Adding a place is still just a row in the Sheet.
 
-## Features
+## What it does
 
-- **Interactive map** — Google Maps with current-location centering, color-coded pins by category (restaurant/bar/snack) and visited status, plus a list view as an alternative
-- **Fast filtering** — a slim, always-visible search bar with live suggestions (cuisine + neighborhood), and a collapsible sheet for category/price/status/open-now/has-notes filters
-- **Two-tier auth** — viewers can browse; admins can add, edit, and delete places directly from the UI, writing straight back to the Google Sheet (no manual spreadsheet editing needed)
-- **Immediate enrichment** — a new or edited place is geocoded and enriched via the Google Places API in the same request, so it shows up on the map right away instead of waiting for the next sync
-- **Neighborhood autosuggest** — typing a neighborhood suggests existing ones first, so near-duplicate entries don't fragment the filter list
-- **Weekly sync** — a scheduled GitHub Actions job re-enriches and refreshes the full dataset
-- **Mobile-first** — designed and tested for touch, small viewports, and fast load times throughout
+- Opens centered on wherever you're standing, pins color-coded by category and visited status
+- Filters by cuisine, neighborhood, price, open-now, and notes — a live-suggest search bar, not a form
+- Lets an admin add, edit, or delete a place right from the map, writing straight back to the Sheet
+- Re-enriches the full list weekly, so hours and ratings don't drift stale between edits
 
-## Tech stack
+## How the data flows
 
-- **Frontend** — React + TypeScript, Vite
-- **Map** — Google Maps JavaScript API (`@vis.gl/react-google-maps`)
-- **Backend** — Vercel serverless functions
-- **Data** — Google Sheets API (read/write) + Google Places API (New) for enrichment
-- **Auth** — JWT session cookie (`jose`), two roles (admin/viewer)
-- **Hosting** — Vercel, on a custom domain
-
-## Data model
-
-The Google Sheet is canonical. `npm run sync` reads it, enriches each row via Places API, and writes the tracked `data/places.json` that the app serves from. Admin add/edit/delete actions write directly back to the sheet and update the current session's view immediately — everyone else sees the change after the next sync.
+The Google Sheet is canonical. A weekly sync reads it, calls Google Places for each row, and writes the enriched data the app actually serves. An admin edit made from the map updates the Sheet and that session's view immediately; everyone else sees it after the next sync.
 
 | Sheet column | Values |
 |---|---|
@@ -43,7 +33,11 @@ The Google Sheet is canonical. `npm run sync` reads it, enriches each row via Pl
 | Borough | e.g. Manhattan, Brooklyn |
 | City | e.g. New York City |
 
-## Getting started
+## Under the hood
+
+React + TypeScript on Vite. Google Maps JS API for the map. Vercel serverless functions for the backend. Google Sheets + Places APIs for data. A JWT session cookie for the two roles, admin and viewer. Hosted on Vercel.
+
+## Running it locally
 
 ```bash
 git clone https://github.com/yotamdror/melissamap.git
@@ -53,10 +47,10 @@ cp .env.example .env
 # fill in the values described in .env.example
 ```
 
-`npm run dev` (Vite only) validates component structure and styling but has no `/api/*` routes — auth silently fake-passes and place data 404s. Use `vercel dev` to run the full app, including auth and the Sheets-backed API routes.
+`npm run dev` checks component structure and styling only — there are no `/api/*` routes, so auth fake-passes and place data 404s. Use `vercel dev` for the real thing: auth and the Sheets-backed API included.
 
-## Possible next steps
+## What's next
 
-- Claude-powered natural-language search ("something cheap and Japanese near me")
-- Shareable deep link to a single pin
-- Per-person "been there" status, for real multi-user usage
+- Natural-language search — "something cheap and Japanese near me"
+- A shareable link to a single pin
+- Per-person "been there," for real multi-user use
