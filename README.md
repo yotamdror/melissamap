@@ -1,10 +1,10 @@
 # Melissa Map
 
-NYC's Health Department inspects something like 28,000 restaurants a year, across all five boroughs — and that's before bars and bakeries. My wife has spent over a decade narrowing that down to about 2,100 places worth going to: reading Eater, New York Magazine, the Times, and keeping only what's actually good. It's still a big list. It's just curated — closer to a critic's beat than the yellow pages Yelp and Google Maps have become, where everyone's listed and whoever pays floats to the top.
+New York has something like 28,000 restaurants across five boroughs, and most of them aren't worth your time. My wife has spent over a decade narrowing that down to about 2,100 worth going to — reading Eater, New York Magazine, the Times, not the pay-to-play yellow pages Yelp and Google Maps have become.
 
-That list started as a Google Doc, then became a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by whatever categories existed, so I added cuisine as its own filter on top of that.
+That list started as a Google Doc, then a Google Sheet so the data could be relational: neighborhood, borough, category, whether she'd been. She could only filter by category, so I added cuisine on top.
 
-Keeping the map in sync with the sheet was still on me, manually. I'd promised to do it once a month, ten minutes tops — I mostly didn't, unless Melissa bugged me. This automates that part: the sheet stays canonical, the map updates itself.
+Keeping the map in sync was on me, manually — promised monthly, ten minutes tops, mostly skipped unless Melissa bugged me. This automates it: the sheet stays canonical, the map updates itself.
 
 **Live:** [melissamap.empirerecords.nyc](https://melissamap.empirerecords.nyc)
 
