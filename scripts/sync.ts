@@ -26,6 +26,7 @@ const OUTPUT_PATH = path.join(__dirname, '../data/places.json');
 // G=6  Neighborhood
 // H=7  Borough
 // I=8  City
+// J=9  Closed (y or blank) - set by scripts/prune-closed.ts, not hand-edited
 const COL = {
   NAME: 0,
   BEEN: 1,
@@ -36,6 +37,7 @@ const COL = {
   NEIGHBORHOOD: 6,
   BOROUGH: 7,
   CITY: 8,
+  CLOSED: 9,
 } as const;
 
 // Types that convey no specific/useful information about what a place
@@ -87,7 +89,7 @@ async function readSheet(): Promise<string[][]> {
   const sheets = google.sheets({ version: 'v4', auth });
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: 'RestaurantList!A2:I', // skip header row
+    range: 'RestaurantList!A2:J', // skip header row
   });
 
   return (response.data.values ?? []) as string[][];
@@ -244,6 +246,10 @@ async function main() {
   for (const row of rows) {
     const name = row[COL.NAME]?.trim();
     if (!name) continue;
+    // Marked closed by scripts/prune-closed.ts - keep the row (and its
+    // history/notes) in the Sheet but drop it from the generated output so
+    // it disappears from the map without deleting anything.
+    if (row[COL.CLOSED]?.trim().toLowerCase() === 'y') continue;
     raw.push({
       name,
       city: row[COL.CITY]?.trim() || 'New York City',

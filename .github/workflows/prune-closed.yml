@@ -1,0 +1,57 @@
+name: Prune Closed Places
+
+on:
+  schedule:
+    - cron: '0 10 1 1,4,7,10 *'  # 10am UTC on the 1st of Jan/Apr/Jul/Oct (quarterly)
+  workflow_dispatch:              # Allow manual trigger from GitHub UI
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Mark closed/no-longer-found places
+        run: npm run prune-closed -- --apply | tee prune-output.txt
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+
+      - name: Commit updated places data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/places.json
+          git diff --staged --quiet || git commit -m "chore: hide places marked closed [skip ci]"
+          git push
+
+      # Runs even if the check above failed, so a broken job still reaches
+      # your inbox instead of failing silently.
+      - name: Prepare email body
+        if: always()
+        run: |
+          if [ -f prune-output.txt ]; then
+            cp prune-output.txt email-body.txt
+          else
+            echo "The quarterly closed-places check did not complete - see the workflow run logs for details." > email-body.txt
+          fi
+
+      - name: Email quarterly report
+        if: always()
+        run: |
+          BODY=$(jq -Rs '.' email-body.txt)
+          curl -fsS -X POST https://api.resend.com/emails \
+            -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"from\":\"Melissa Map <reports@empirerecords.nyc>\",\"to\":[\"yotamedror@gmail.com\"],\"subject\":\"Melissa Map: quarterly closed-places report\",\"text\":${BODY}}"

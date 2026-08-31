@@ -40,8 +40,17 @@ Claude mobile projects. Keep it aligned when durable project rules change.
   history as exposed data if it ever needs scrubbing.
 - `npm run sync` is networked, mutating, quota-bearing, and rewrites the generated
   JSON. Run it only when asked, with valid credentials, and inspect the diff.
-- The weekly GitHub workflow can advance the branch by committing generated
-  data. Fetch before pushing and expect sync races.
+- `npm run prune-closed` (defaults to dry run; `-- --apply` writes) checks each
+  place's Google Places business status and marks permanently-closed/no-longer-
+  found rows with `y` in the Sheet's `Closed` column instead of deleting them;
+  `sync.ts` then skips closed rows so they drop off the map. Review the dry-run
+  list before applying - a bad match can flag a place that didn't actually close.
+- The weekly sync and quarterly prune GitHub workflows can advance the branch by
+  committing generated data. Fetch before pushing and expect sync races.
+- `prune-closed.yml` emails a run summary via the Resend API to
+  yotamedror@gmail.com, sending from reports@empirerecords.nyc. Needs the
+  `RESEND_API_KEY` repo secret (Resend account with empirerecords.nyc verified -
+  DNS records live at Spaceship, its registrar as of 2026-08-30).
 - Never put passwords, JWT secrets, service-account JSON, API keys, sheet rows,
   or private notes in docs, logs, issues, or mobile-chat handoffs. Frontend Google
   keys remain public and must be appropriately restricted.

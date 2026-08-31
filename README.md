@@ -14,6 +14,7 @@ Keeping the map in sync was on me, manually — promised monthly, ten minutes to
 - Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
 - Admin can add, edit, delete a place right from the map, writing straight back to the sheet
 - Weekly sync re-enriches everything automatically
+- Quarterly check flags closed places in the sheet and drops them off the map
 
 ## Data
 
@@ -30,6 +31,7 @@ Sheet's canonical. Weekly sync reads it, hits the Places API per row, writes wha
 | Neighborhood | e.g. Chelsea, West Village |
 | Borough | e.g. Manhattan, Brooklyn |
 | City | e.g. New York City |
+| Closed | `y` or blank — set by the quarterly check, not hand-edited |
 
 ## Stack
 
