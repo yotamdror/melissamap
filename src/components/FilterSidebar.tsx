@@ -11,6 +11,7 @@ interface Props {
   neighborhoods: string[];
   defaultFilters: Filters;
   isAdmin: boolean;
+  onLogout: () => void;
   view: 'map' | 'list';
   onViewChange: (v: 'map' | 'list') => void;
   resultCount: number;
@@ -72,6 +73,7 @@ export default function FilterSidebar({
   neighborhoods,
   defaultFilters,
   isAdmin,
+  onLogout,
   view,
   onViewChange,
   resultCount,
@@ -339,6 +341,10 @@ export default function FilterSidebar({
               onClick={() => onChange(defaultFilters)}
             >
               Reset filters
+            </button>
+
+            <button className="filter-reset filter-reset--spaced" onClick={onLogout}>
+              Log out
             </button>
           </div>
         </div>

@@ -86,6 +86,13 @@ export default function App() {
     }
   }, [role]);
 
+  function logout() {
+    fetch('/api/logout', { method: 'POST' }).finally(() => {
+      setRole(null);
+      setData(null);
+    });
+  }
+
   function upsertPlace(place: Place) {
     setData(d => {
       if (!d) return d;
@@ -142,6 +149,7 @@ export default function App() {
         neighborhoods={neighborhoods}
         defaultFilters={DEFAULT_FILTERS}
         isAdmin={isAdmin}
+        onLogout={logout}
         view={view}
         onViewChange={setView}
         resultCount={filtered.length}
