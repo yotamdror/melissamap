@@ -10,6 +10,7 @@ interface Props {
   cuisineType: Record<string, PlaceType>;
   neighborhoods: string[];
   defaultFilters: Filters;
+  isAdmin: boolean;
   view: 'map' | 'list';
   onViewChange: (v: 'map' | 'list') => void;
   resultCount: number;
@@ -70,6 +71,7 @@ export default function FilterSidebar({
   cuisineType,
   neighborhoods,
   defaultFilters,
+  isAdmin,
   view,
   onViewChange,
   resultCount,
@@ -159,6 +161,9 @@ export default function FilterSidebar({
   }
   if (filters.hasNotes) {
     chips.push({ key: 'hasNotes', label: 'Has notes', onRemove: () => onChange({ ...filters, hasNotes: false }) });
+  }
+  if (filters.closedOnly) {
+    chips.push({ key: 'closedOnly', label: 'Closed places', onRemove: () => onChange({ ...filters, closedOnly: false }) });
   }
 
   return (
@@ -311,6 +316,20 @@ export default function FilterSidebar({
                   <span className="filter-switch__track" />
                 </label>
               </div>
+            )}
+
+            {isAdmin && (
+              <>
+                <div className="filter-section__label filter-section__label--spaced">Admin</div>
+                <div className="filter-toggle-group">
+                  <button
+                    className={`filter-toggle filter-toggle--closed${filters.closedOnly ? ' filter-toggle--active' : ''}`}
+                    onClick={() => onChange({ ...filters, closedOnly: !filters.closedOnly })}
+                  >
+                    Closed places only
+                  </button>
+                </div>
+              </>
             )}
 
             <button

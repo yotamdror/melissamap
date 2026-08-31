@@ -42,8 +42,10 @@ Claude mobile projects. Keep it aligned when durable project rules change.
   JSON. Run it only when asked, with valid credentials, and inspect the diff.
 - `npm run prune-closed` (defaults to dry run; `-- --apply` writes) checks each
   place's Google Places business status and marks permanently-closed/no-longer-
-  found rows with `y` in the Sheet's `Closed` column instead of deleting them;
-  `sync.ts` then skips closed rows so they drop off the map. Review the dry-run
+  found rows with `y` in the Sheet's `Closed` column instead of deleting them.
+  Closed places stay in `data/places.json` with `closed: true` - hidden from
+  normal browsing, visible only through the admin-only "closed" filter
+  (`Filters.closedOnly` in `src/types.ts`, off by default). Review the dry-run
   list before applying - a bad match can flag a place that didn't actually close.
 - The weekly sync and quarterly prune GitHub workflows can advance the branch by
   committing generated data. Fetch before pushing and expect sync races.

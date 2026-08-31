@@ -18,10 +18,16 @@ const DEFAULT_FILTERS: Filters = {
   neighborhood: [],
   hasNotes: false,
   search: '',
+  closedOnly: false,
 };
 
 function applyFilters(places: Place[], filters: Filters): Place[] {
   return places.filter(p => {
+    // Closed places never mix with the normal view - closedOnly is an
+    // exclusive admin mode, not an additive facet.
+    if (filters.closedOnly) return !!p.closed;
+    if (p.closed) return false;
+
     const typeMatch =
       (filters.types.includes('restaurant') && p.isRestaurant) ||
       (filters.types.includes('bar') && p.isBar) ||
@@ -135,6 +141,7 @@ export default function App() {
         cuisineType={cuisineType}
         neighborhoods={neighborhoods}
         defaultFilters={DEFAULT_FILTERS}
+        isAdmin={isAdmin}
         view={view}
         onViewChange={setView}
         resultCount={filtered.length}

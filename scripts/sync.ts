@@ -208,6 +208,7 @@ interface RawRow {
   isRestaurant: boolean;
   isSnacksDessert: boolean;
   isBar: boolean;
+  closed: boolean;
 }
 
 // Rows that share a name AND a neighborhood are the same physical place split
@@ -227,6 +228,7 @@ function mergeRows(id: string, rows: RawRow[]): Place {
     neighborhood: first.neighborhood,
     borough: first.borough,
     city: first.city,
+    closed: rows.some(r => r.closed),
   };
 }
 
@@ -246,10 +248,6 @@ async function main() {
   for (const row of rows) {
     const name = row[COL.NAME]?.trim();
     if (!name) continue;
-    // Marked closed by scripts/prune-closed.ts - keep the row (and its
-    // history/notes) in the Sheet but drop it from the generated output so
-    // it disappears from the map without deleting anything.
-    if (row[COL.CLOSED]?.trim().toLowerCase() === 'y') continue;
     raw.push({
       name,
       city: row[COL.CITY]?.trim() || 'New York City',
@@ -260,6 +258,9 @@ async function main() {
       isRestaurant: row[COL.RESTAURANT]?.trim().toLowerCase() === 'y',
       isSnacksDessert: row[COL.SNACK]?.trim().toLowerCase() === 'y',
       isBar: row[COL.BAR]?.trim().toLowerCase() === 'y',
+      // Marked closed by scripts/prune-closed.ts - kept in the generated
+      // output (not dropped) so the admin-only "closed" filter can show it.
+      closed: row[COL.CLOSED]?.trim().toLowerCase() === 'y',
     });
   }
 

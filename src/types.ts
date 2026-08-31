@@ -29,6 +29,9 @@ export interface Place {
   googleRatingCount?: number;
   openPeriods?: OpenPeriod[];
   weekdayHours?: string[];
+  // Set by scripts/prune-closed.ts from the sheet's Closed column - kept in
+  // the data (not dropped) so an admin can review what's been marked closed.
+  closed?: boolean;
 }
 
 export interface PlacesData {
@@ -48,4 +51,7 @@ export interface Filters {
   neighborhood: string[];
   hasNotes: boolean;
   search: string;
+  // Admin-only, off by default: exclusively shows closed places instead of
+  // mixing them into the normal browsing view - see FilterSidebar.
+  closedOnly: boolean;
 }

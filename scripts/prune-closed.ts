@@ -1,9 +1,9 @@
 /**
  * Checks every enriched place's Google Places business status and marks
  * permanently-closed or no-longer-found places as closed in the Sheet
- * (canonical) rather than deleting them - sync.ts then excludes anything
- * marked closed from the generated places.json, hiding it from the map
- * while keeping the row (and the option to un-mark it) intact.
+ * (canonical) rather than deleting them. Closed places stay in the
+ * generated data with `closed: true` - the app hides them from normal
+ * browsing but an admin-only filter can show just the closed ones.
  *
  * Defaults to a dry run that only prints the candidate list. Pass --apply
  * to actually write the Sheet and update the local cache.
@@ -145,13 +145,16 @@ async function main() {
   console.log('\nMarking closed in the Sheet…');
   await markSheetRowsClosed(toClose);
 
+  // Flag rather than remove - closed places stay in the data so the
+  // admin-only "closed" filter (src/App.tsx) can show them; sync.ts does
+  // the same on every future run by reading the Sheet's Closed column.
   const closedIds = new Set(toClose.map(p => p.id));
   const output: PlacesData = {
     lastUpdated: new Date().toISOString(),
-    places: cache.places.filter(p => !closedIds.has(p.id)),
+    places: cache.places.map(p => (closedIds.has(p.id) ? { ...p, closed: true } : p)),
   };
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
-  console.log(`Done. Marked ${toClose.length} place(s) closed and hid them, ${output.places.length} remain visible.`);
+  console.log(`Done. Marked ${toClose.length} place(s) closed.`);
 }
 
 main().catch(err => {

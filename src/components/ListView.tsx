@@ -26,6 +26,7 @@ function PlaceRow({ place, isAdmin, onEdit }: { place: Place; isAdmin: boolean; 
       <div className="list-row__top">
         <span className="list-row__name">{place.name}</span>
         <div className="list-row__top-right">
+          {place.closed && <span className="info-window__badge info-window__badge--closed">Closed</span>}
           {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
           {isAdmin && (
             <button className="list-row__edit" onClick={() => onEdit(place)} aria-label={`Edit ${place.name}`}>

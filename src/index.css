@@ -8,6 +8,7 @@
   --color-restaurant: #F4845F;
   --color-bar: #4ECDC4;
   --color-snack: #FFD93D;
+  --color-closed: #98989D;
   --color-sidebar-bg: #1c1c1e;
   --color-sidebar-text: #ffffff;
   --color-sidebar-muted: #8e8e93;
@@ -504,6 +505,11 @@ html, body, #root {
   flex-shrink: 0;
 }
 
+.info-window__badge--closed {
+  background: var(--color-closed);
+  color: white;
+}
+
 .info-window__rating-link {
   color: #007aff;
   text-decoration: none;
@@ -697,6 +703,8 @@ html, body, #root {
 .filter-toggle--bar.filter-toggle--active:hover        { background: var(--color-bar); border-color: var(--color-bar); color: white; }
 .filter-toggle--snacks.filter-toggle--active,
 .filter-toggle--snacks.filter-toggle--active:hover      { background: var(--color-snack); border-color: var(--color-snack); color: #1c1c1e; }
+.filter-toggle--closed.filter-toggle--active,
+.filter-toggle--closed.filter-toggle--active:hover      { background: var(--color-closed); border-color: var(--color-closed); color: white; }
 
 /* ── Active filter chips (in the slim bar) + suggestions dropdown ─────────────── */
 

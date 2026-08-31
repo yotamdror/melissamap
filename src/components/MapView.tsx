@@ -12,12 +12,13 @@ import { shortCuisineLabel } from '../lib/cuisineLabel';
 
 const NYC_CENTER = { lat: 40.7549, lng: -73.984 };
 
-type PlaceType = 'restaurant' | 'bar' | 'snack';
+type PlaceType = 'restaurant' | 'bar' | 'snack' | 'closed';
 
 const PIN_COLORS: Record<PlaceType, string> = {
   restaurant: '#FF6B6B',
   bar: '#4ECDC4',
   snack: '#FFD93D',
+  closed: '#98989D',
 };
 
 // A place you haven't been to yet is shown at reduced opacity rather than a
@@ -39,6 +40,7 @@ interface MarkerWithInfoProps {
 }
 
 function placeType(p: Place): PlaceType {
+  if (p.closed) return 'closed';
   if (p.isBar) return 'bar';
   if (p.isSnacksDessert) return 'snack';
   return 'restaurant';
@@ -103,9 +105,10 @@ function MarkerWithInfo({ place, selected, onSelect, isAdmin, onEdit }: MarkerWi
               ].filter(Boolean).join('  ·  ')}
             </div>
 
-            {(place.neighborhood || place.hasBeenTo) && (
+            {(place.neighborhood || place.hasBeenTo || place.closed) && (
               <div className="info-window__row">
                 <span className="info-window__neighborhood">{place.neighborhood}</span>
+                {place.closed && <span className="info-window__badge info-window__badge--closed">Closed</span>}
                 {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
               </div>
             )}
