@@ -14,7 +14,7 @@ Keeping the map in sync was on me, manually — promised monthly, ten minutes to
 - Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
 - Admin can add, edit, delete a place right from the map, writing straight back to the sheet
 - Weekly sync re-enriches everything automatically
-- Quarterly check flags closed places in the sheet; hidden from browsing, reviewable through an admin-only filter
+- Quarterly check flags closed places in the sheet, hidden from browsing but reviewable through the admin-only Restaurant Graveyard filter — gravestone pins and all
 
 ## Data
 

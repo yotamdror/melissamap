@@ -163,7 +163,7 @@ export default function FilterSidebar({
     chips.push({ key: 'hasNotes', label: 'Has notes', onRemove: () => onChange({ ...filters, hasNotes: false }) });
   }
   if (filters.closedOnly) {
-    chips.push({ key: 'closedOnly', label: 'Closed places', onRemove: () => onChange({ ...filters, closedOnly: false }) });
+    chips.push({ key: 'closedOnly', label: '🪦 Graveyard', onRemove: () => onChange({ ...filters, closedOnly: false }) });
   }
 
   return (
@@ -224,7 +224,9 @@ export default function FilterSidebar({
           </button>
         </div>
 
-        <div className="filter-bar__count">{resultCount.toLocaleString()} places</div>
+        <div className="filter-bar__count">
+          {resultCount.toLocaleString()} {filters.closedOnly ? 'graves' : 'places'}
+        </div>
 
         {chips.length > 0 && (
           <div className="filter-bar__chips">
@@ -326,7 +328,7 @@ export default function FilterSidebar({
                     className={`filter-toggle filter-toggle--closed${filters.closedOnly ? ' filter-toggle--active' : ''}`}
                     onClick={() => onChange({ ...filters, closedOnly: !filters.closedOnly })}
                   >
-                    Closed places only
+                    🪦 Restaurant Graveyard
                   </button>
                 </div>
               </>

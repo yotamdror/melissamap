@@ -53,10 +53,19 @@ const pinIconCache = new Map<PlaceType, string>();
 function pinIconUrl(type: PlaceType): string {
   const cached = pinIconCache.get(type);
   if (cached) return cached;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 22 28">
-    <path d="M11 0C4.9 0 0 4.9 0 11c0 8.25 11 17 11 17s11-8.75 11-17c0-6.1-4.9-11-11-11z"
-      fill="${PIN_COLORS[type]}" stroke="rgba(0,0,0,0.25)" stroke-width="1.5"/>
-  </svg>`;
+  // Closed places get a tombstone instead of the teardrop pin - the
+  // Restaurant Graveyard filter (FilterSidebar) shows only these.
+  const svg = type === 'closed'
+    ? `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 22 28">
+        <path d="M4 28V13A7 10 0 0 1 18 13V28Z"
+          fill="${PIN_COLORS.closed}" stroke="rgba(0,0,0,0.35)" stroke-width="1.5"/>
+        <line x1="11" y1="16" x2="11" y2="24" stroke="rgba(0,0,0,0.35)" stroke-width="1.4"/>
+        <line x1="7" y1="19" x2="15" y2="19" stroke="rgba(0,0,0,0.35)" stroke-width="1.4"/>
+      </svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="28" viewBox="0 0 22 28">
+        <path d="M11 0C4.9 0 0 4.9 0 11c0 8.25 11 17 11 17s11-8.75 11-17c0-6.1-4.9-11-11-11z"
+          fill="${PIN_COLORS[type]}" stroke="rgba(0,0,0,0.25)" stroke-width="1.5"/>
+      </svg>`;
   const url = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
   pinIconCache.set(type, url);
   return url;
@@ -108,7 +117,7 @@ function MarkerWithInfo({ place, selected, onSelect, isAdmin, onEdit }: MarkerWi
             {(place.neighborhood || place.hasBeenTo || place.closed) && (
               <div className="info-window__row">
                 <span className="info-window__neighborhood">{place.neighborhood}</span>
-                {place.closed && <span className="info-window__badge info-window__badge--closed">Closed</span>}
+                {place.closed && <span className="info-window__badge info-window__badge--closed">🪦 Closed</span>}
                 {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
               </div>
             )}

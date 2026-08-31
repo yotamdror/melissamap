@@ -51,7 +51,7 @@ export interface Filters {
   neighborhood: string[];
   hasNotes: boolean;
   search: string;
-  // Admin-only, off by default: exclusively shows closed places instead of
-  // mixing them into the normal browsing view - see FilterSidebar.
+  // Admin-only "Restaurant Graveyard" toggle, off by default: exclusively
+  // shows closed places instead of mixing them into normal browsing.
   closedOnly: boolean;
 }
