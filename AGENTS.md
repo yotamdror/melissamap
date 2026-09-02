@@ -40,6 +40,10 @@ Claude mobile projects. Keep it aligned when durable project rules change.
   history as exposed data if it ever needs scrubbing.
 - `npm run sync` is networked, mutating, quota-bearing, and rewrites the generated
   JSON. Run it only when asked, with valid credentials, and inspect the diff.
+  It refuses to enrich more than 25 uncached places by default because each one
+  currently makes up to three Places API requests. If a larger batch is truly
+  intentional, review the printed request count and pass an explicit
+  `-- --max-enrichments=N`; never raise the cap merely to make a failed job pass.
 - `npm run prune-closed` (defaults to dry run; `-- --apply` writes) checks each
   place's Google Places business status and marks permanently-closed/no-longer-
   found rows with `y` in the Sheet's `Closed` column instead of deleting them.

@@ -13,12 +13,21 @@ Keeping the map in sync was on me, manually — promised monthly, ten minutes to
 - Centers on wherever you're standing, pins color-coded by category and visited status
 - Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
 - Admin can add, edit, delete a place right from the map, writing straight back to the sheet
-- Weekly sync re-enriches everything automatically
+- Weekly sync refreshes sheet-owned fields and only enriches newly added places
 - Quarterly check flags closed places in the sheet, hidden from browsing but reviewable through the admin-only Restaurant Graveyard filter — gravestone pins and all
 
 ## Data
 
-Sheet's canonical. Weekly sync reads it, hits the Places API per row, writes what the app serves. Admin edits from the map update the sheet and that session immediately; everyone else sees it after the next sync. Since the sheet is the actual backend, this map is just one frontend on it — she's not locked into Google Maps, Yelp, or (god forbid) Foursquare to keep track of any of it.
+Sheet's canonical. Weekly sync reads it, reuses cached Places data, enriches only
+new venues, and writes what the app serves. Admin edits from the map update the
+sheet and that session immediately; everyone else sees it after the next sync.
+Since the sheet is the actual backend, this map is just one frontend on it —
+she's not locked into Google Maps, Yelp, or (god forbid) Foursquare to keep track
+of any of it.
+
+The sync refuses to enrich more than 25 uncached venues by default. Each one can
+generate up to three Google Places requests, so a full cache rebuild must be
+reviewed and explicitly authorized with `npm run sync -- --max-enrichments=N`.
 
 | Sheet column | Values |
 |---|---|

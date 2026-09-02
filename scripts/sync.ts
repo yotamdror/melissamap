@@ -15,6 +15,18 @@ import type { Place, PlacesData, OpenPeriod } from '../src/types';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_PATH = path.join(__dirname, '../data/places.json');
+const DEFAULT_MAX_ENRICHMENTS = 25;
+
+function getMaxEnrichments(): number {
+  const argument = process.argv.find(arg => arg.startsWith('--max-enrichments='));
+  if (!argument) return DEFAULT_MAX_ENRICHMENTS;
+
+  const value = Number(argument.split('=', 2)[1]);
+  if (!Number.isInteger(value) || value < 0) {
+    throw new Error('--max-enrichments must be a non-negative integer');
+  }
+  return value;
+}
 
 // ── Sheet column indices (0-based) ──────────────────────────────────────────
 // A=0  Name
@@ -273,6 +285,34 @@ async function main() {
 
   const maps = new MapsClient();
   const places: Place[] = [];
+
+  // Every uncached place currently triggers three Google Places requests:
+  // Find Place (Legacy), Place Details (Legacy), and Place Details (New).
+  // A full cache rebuild can therefore become expensive very quickly. Refuse
+  // unexpectedly large batches unless the operator explicitly raises the cap.
+  let enrichmentCount = 0;
+  for (const [baseId, groupRows] of byBaseId) {
+    const distinctNeighborhoods = new Set(groupRows.map(r => r.neighborhood));
+    const multiLocation = distinctNeighborhoods.size > 1;
+    for (const neighborhood of distinctNeighborhoods) {
+      const id = multiLocation
+        ? `${baseId}--${rowToId(neighborhood) || 'unknown'}`
+        : baseId;
+      if (existingById.get(id)?.lat == null) enrichmentCount++;
+    }
+  }
+
+  const maxEnrichments = getMaxEnrichments();
+  console.log(
+    `Enrichment plan: ${enrichmentCount} uncached place(s), up to ${enrichmentCount * 3} Places API request(s)`,
+  );
+  if (enrichmentCount > maxEnrichments) {
+    throw new Error(
+      `Refusing to enrich ${enrichmentCount} places; safety cap is ${maxEnrichments}. ` +
+      `Review the cache and billing estimate first, then explicitly run with ` +
+      `--max-enrichments=${enrichmentCount} if this spend is intentional.`,
+    );
+  }
 
   for (const [baseId, groupRows] of byBaseId) {
     const distinctNeighborhoods = new Set(groupRows.map(r => r.neighborhood));
