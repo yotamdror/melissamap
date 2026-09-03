@@ -37,7 +37,13 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
     if (filters.visited === 'been' && !p.hasBeenTo) return false;
     if (filters.visited === 'want' && p.hasBeenTo) return false;
 
-    if (p.priceLevel && !filters.priceLevel.includes(p.priceLevel)) return false;
+    // A missing priceLevel means Google never returned pricing for this place
+    // (~13% of the dataset). Only exclude those once the filter is actually
+    // narrowed - otherwise unpriced places can't be confirmed to match the
+    // selected levels and would otherwise leak through every price filter.
+    if (filters.priceLevel.length < 4 && (!p.priceLevel || !filters.priceLevel.includes(p.priceLevel))) {
+      return false;
+    }
 
     if (filters.openNow) {
       if (p.openPeriods) {
