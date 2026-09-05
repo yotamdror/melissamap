@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import type { Place, PlacesData, OpenPeriod } from '../src/types';
+import { getPlaceSearchQuery } from '../src/placeSearchOverrides';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_PATH = path.join(__dirname, '../data/places.json');
@@ -137,6 +138,7 @@ async function fetchRichDetails(placeId: string, apiKey: string): Promise<RichDe
 }
 
 async function enrichPlace(
+  id: string,
   name: string,
   neighborhood: string,
   city: string,
@@ -153,7 +155,7 @@ async function enrichPlace(
   // 1. Text search to get place_id + coordinates
   const searchRes = await maps.findPlaceFromText({
     params: {
-      input: `${name}, ${locationPart}`,
+      input: getPlaceSearchQuery(id, name, locationPart),
       inputtype: PlaceInputType.textQuery,
       fields: ['place_id', 'geometry', 'name'],
       key: apiKey,
@@ -337,7 +339,7 @@ async function main() {
         console.log(`  [cached] ${merged.name}`);
       } else {
         console.log(`  [enriching] ${merged.name}${neighborhood ? ` (${neighborhood})` : ''}`);
-        const enriched = await enrichPlace(merged.name, neighborhood, merged.city, maps);
+        const enriched = await enrichPlace(id, merged.name, neighborhood, merged.city, maps);
         places.push({ ...merged, ...enriched });
         // Small delay to avoid Places API rate limits
         await new Promise(r => setTimeout(r, 200));

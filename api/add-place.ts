@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { jwtVerify } from 'jose';
 import { google } from 'googleapis';
 import type { Place } from '../src/types';
+import { getPlaceSearchQuery } from '../src/placeSearchOverrides';
 
 // Same denylist approach as scripts/sync.ts - see that file for why a
 // denylist beats a hand-maintained cuisine allowlist.
@@ -133,7 +134,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         'X-Goog-Api-Key': apiKey,
         'X-Goog-FieldMask': 'places.id,places.location,places.formattedAddress,places.types,places.primaryType,places.rating,places.userRatingCount',
       },
-      body: JSON.stringify({ textQuery: `${name}, ${locationPart}` }),
+      body: JSON.stringify({ textQuery: getPlaceSearchQuery(base.id, name, locationPart) }),
     });
     const searchData = await searchRes.json();
     const candidate = searchData.places?.[0];

@@ -139990,70 +139990,61 @@
       "neighborhood": "Long Island City",
       "borough": "Queens",
       "city": "NYC",
-      "lat": 40.7471944,
-      "lng": -73.9566667,
-      "placeId": "ChIJd00MRyJZwokRU-lmTi8kC2I",
-      "address": "46-10 Center Blvd, Long Island City, NY 11109, USA",
-      "cuisineTags": [],
-      "priceLevel": 3,
+      "lat": 40.742666799999995,
+      "lng": -73.9518057,
+      "placeId": "ChIJJVkc8iRZwokRA-3qv5OZmsg",
+      "address": "10-76 Jackson Ave, Long Island City, NY 11101, USA",
+      "cuisineTags": [
+        "Italian Restaurant",
+        "Family Restaurant",
+        "Pizza Restaurant",
+        "European Restaurant"
+      ],
+      "priceLevel": 2,
       "openPeriods": [
         {
-          "day": 0,
-          "open": "1200",
-          "close": "1500"
-        },
-        {
-          "day": 0,
-          "open": "1600",
-          "close": "2100"
-        },
-        {
           "day": 1,
-          "open": "1700",
-          "close": "2100"
+          "open": "1130",
+          "close": "2115"
         },
         {
           "day": 2,
-          "open": "1700",
-          "close": "2100"
+          "open": "1130",
+          "close": "2115"
         },
         {
           "day": 3,
-          "open": "1700",
-          "close": "2100"
+          "open": "1130",
+          "close": "2115"
         },
         {
           "day": 4,
-          "open": "1700",
-          "close": "2100"
+          "open": "1130",
+          "close": "2115"
         },
         {
           "day": 5,
-          "open": "1700",
-          "close": "2200"
+          "open": "1130",
+          "close": "2215"
         },
         {
           "day": 6,
-          "open": "1200",
-          "close": "1500"
-        },
-        {
-          "day": 6,
-          "open": "1700",
-          "close": "2200"
+          "open": "1530",
+          "close": "2215"
         }
       ],
       "weekdayHours": [
-        "Monday: 5:00 – 9:00 PM",
-        "Tuesday: 5:00 – 9:00 PM",
-        "Wednesday: 5:00 – 9:00 PM",
-        "Thursday: 5:00 – 9:00 PM",
-        "Friday: 5:00 – 10:00 PM",
-        "Saturday: 12:00 – 3:00 PM, 5:00 – 10:00 PM",
-        "Sunday: 12:00 – 3:00 PM, 4:00 – 9:00 PM"
+        "Monday: 11:30 AM – 9:15 PM",
+        "Tuesday: 11:30 AM – 9:15 PM",
+        "Wednesday: 11:30 AM – 9:15 PM",
+        "Thursday: 11:30 AM – 9:15 PM",
+        "Friday: 11:30 AM – 10:15 PM",
+        "Saturday: 3:30 – 10:15 PM",
+        "Sunday: Closed"
       ],
-      "googleRating": 4.4,
-      "googleRatingCount": 2107,
+      "cuisine": "Italian Restaurant",
+      "googleRating": 4.6,
+      "googleRatingCount": 953,
       "closed": false
     },
     {
