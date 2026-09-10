@@ -14,7 +14,7 @@ Keeping the map in sync was on me, manually — promised monthly, ten minutes to
 - Filters by cuisine, neighborhood, price, open-now, notes — live-suggest search, not a form
 - Admin can add, edit, delete a place right from the map, writing straight back to the sheet
 - Weekly sync refreshes sheet-owned fields and only enriches newly added places
-- Quarterly check flags closed places in the sheet, hidden from browsing but reviewable through the admin-only Restaurant Graveyard filter — gravestone pins and all
+- Weekly check flags closed places in the sheet, hidden from browsing but reviewable through the admin-only Restaurant Graveyard filter — gravestone pins and all
 
 ## Data
 
@@ -40,7 +40,7 @@ reviewed and explicitly authorized with `npm run sync -- --max-enrichments=N`.
 | Neighborhood | e.g. Chelsea, West Village |
 | Borough | e.g. Manhattan, Brooklyn |
 | City | e.g. New York City |
-| Closed | `y` or blank — set by the quarterly check, not hand-edited |
+| Closed | `y` or blank — set by the weekly check, not hand-edited |
 
 ## Stack
 

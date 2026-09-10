@@ -9,7 +9,7 @@
  * to actually write the Sheet and update the local cache.
  *
  * Run manually: npm run prune-closed [-- --apply]
- * Runs automatically (with --apply): GitHub Actions on a quarterly schedule
+ * Runs automatically (with --apply): GitHub Actions weekly, 1hr after sync
  */
 
 import { google } from 'googleapis';

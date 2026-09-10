@@ -51,8 +51,9 @@ Claude mobile projects. Keep it aligned when durable project rules change.
   normal browsing, visible only through the admin-only "closed" filter
   (`Filters.closedOnly` in `src/types.ts`, off by default). Review the dry-run
   list before applying - a bad match can flag a place that didn't actually close.
-- The weekly sync and quarterly prune GitHub workflows can advance the branch by
-  committing generated data. Fetch before pushing and expect sync races.
+- The weekly sync and weekly prune (1hr after sync) GitHub workflows can advance
+  the branch by committing generated data. Fetch before pushing and expect sync
+  races.
 - `prune-closed.yml` emails a run summary via the Resend API to
   yotamedror@gmail.com, sending from reports@empirerecords.nyc. Needs the
   `RESEND_API_KEY` repo secret (Resend account with empirerecords.nyc verified -

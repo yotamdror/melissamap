@@ -2,8 +2,8 @@ name: Prune Closed Places
 
 on:
   schedule:
-    - cron: '0 10 1 1,4,7,10 *'  # 10am UTC on the 1st of Jan/Apr/Jul/Oct (quarterly)
-  workflow_dispatch:              # Allow manual trigger from GitHub UI
+    - cron: '0 11 * * 1'  # 11am UTC every Monday (1hr after the weekly sync)
+  workflow_dispatch:      # Allow manual trigger from GitHub UI
 
 jobs:
   prune:
@@ -44,14 +44,14 @@ jobs:
           if [ -f prune-output.txt ]; then
             cp prune-output.txt email-body.txt
           else
-            echo "The quarterly closed-places check did not complete - see the workflow run logs for details." > email-body.txt
+            echo "The weekly closed-places check did not complete - see the workflow run logs for details." > email-body.txt
           fi
 
-      - name: Email quarterly report
+      - name: Email weekly report
         if: always()
         run: |
           BODY=$(jq -Rs '.' email-body.txt)
           curl -fsS -X POST https://api.resend.com/emails \
             -H "Authorization: Bearer ${{ secrets.RESEND_API_KEY }}" \
             -H "Content-Type: application/json" \
-            -d "{\"from\":\"Melissa Map <reports@empirerecords.nyc>\",\"to\":[\"yotamedror@gmail.com\"],\"subject\":\"Melissa Map: quarterly closed-places report\",\"text\":${BODY}}"
+            -d "{\"from\":\"Melissa Map <reports@empirerecords.nyc>\",\"to\":[\"yotamedror@gmail.com\"],\"subject\":\"Melissa Map: weekly closed-places report\",\"text\":${BODY}}"
