@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-31T00:55:41.715Z",
+  "lastUpdated": "2026-09-12T22:16:37.315Z",
   "places": [
     {
       "id": "ayat",
@@ -580,7 +580,7 @@
       "cuisine": "Middle Eastern Restaurant",
       "googleRating": 4.5,
       "googleRatingCount": 197,
-      "closed": false
+      "closed": true
     },
     {
       "id": "georgian-cuisine",
@@ -18107,7 +18107,7 @@
       ],
       "googleRating": 4.2,
       "googleRatingCount": 84,
-      "closed": false
+      "closed": true
     },
     {
       "id": "island-pops",
@@ -44780,7 +44780,7 @@
       "cuisine": "Italian Restaurant",
       "googleRating": 4.4,
       "googleRatingCount": 700,
-      "closed": false
+      "closed": true
     },
     {
       "id": "beco",
@@ -61916,7 +61916,7 @@
       "cuisine": "Taiwanese Restaurant",
       "googleRating": 4.2,
       "googleRatingCount": 942,
-      "closed": false
+      "closed": true
     },
     {
       "id": "7th-street-burger",
@@ -63626,7 +63626,7 @@
       ],
       "googleRating": 4.5,
       "googleRatingCount": 1227,
-      "closed": false
+      "closed": true
     },
     {
       "id": "eim-khao-mun-kai--east-village",
@@ -67392,7 +67392,7 @@
       "cuisine": "Fast Food Restaurant",
       "googleRating": 4.4,
       "googleRatingCount": 606,
-      "closed": false
+      "closed": true
     },
     {
       "id": "s-mac",
@@ -87592,7 +87592,7 @@
       "priceLevel": 2,
       "googleRating": 4.3,
       "googleRatingCount": 701,
-      "closed": false
+      "closed": true
     },
     {
       "id": "dhamaka",
@@ -88848,7 +88848,7 @@
       ],
       "googleRating": 4.6,
       "googleRatingCount": 2216,
-      "closed": false
+      "closed": true
     },
     {
       "id": "jonny-s-pizza",
@@ -99919,7 +99919,7 @@
       "cuisine": "Italian Restaurant",
       "googleRating": 4.3,
       "googleRatingCount": 929,
-      "closed": false
+      "closed": true
     },
     {
       "id": "aunt-jake-s--upper-east-side",
@@ -100071,7 +100071,7 @@
       "priceLevel": 2,
       "googleRating": 4.2,
       "googleRatingCount": 747,
-      "closed": false
+      "closed": true
     },
     {
       "id": "cafe-habana",
@@ -110308,7 +110308,7 @@
       "priceLevel": 2,
       "googleRating": 4.4,
       "googleRatingCount": 1994,
-      "closed": false
+      "closed": true
     },
     {
       "id": "bubby-s",
@@ -117647,7 +117647,7 @@
       "cuisine": "Italian Restaurant",
       "googleRating": 4.5,
       "googleRatingCount": 948,
-      "closed": false
+      "closed": true
     },
     {
       "id": "sasabune",
@@ -127105,7 +127105,7 @@
       "priceLevel": 2,
       "googleRating": 4.5,
       "googleRatingCount": 784,
-      "closed": false
+      "closed": true
     },
     {
       "id": "left-bank",
@@ -144474,7 +144474,7 @@
       ],
       "googleRating": 4.3,
       "googleRatingCount": 53,
-      "closed": false
+      "closed": true
     },
     {
       "id": "holtermann-s-bakery",
