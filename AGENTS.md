@@ -2,9 +2,6 @@
 
 These rules extend `~/Projects/AGENTS.md` and apply to MelissaMap.
 
-`MOBILE_PROJECT_PROMPT.md` is the ready-to-paste instruction for ChatGPT and
-Claude mobile projects. Keep it aligned when durable project rules change.
-
 ## Sources of truth
 
 - The Google Sheet is canonical for curated rows. `scripts/sync.ts` reads it,
