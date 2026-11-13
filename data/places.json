@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-12T22:16:37.315Z",
+  "lastUpdated": "2026-11-13T02:29:03.885Z",
   "places": [
     {
       "id": "ayat",
@@ -580,7 +580,7 @@
       "cuisine": "Middle Eastern Restaurant",
       "googleRating": 4.5,
       "googleRatingCount": 197,
-      "closed": true
+      "closed": false
     },
     {
       "id": "georgian-cuisine",
@@ -25786,6 +25786,76 @@
       "closed": false
     },
     {
+      "id": "border-town",
+      "name": "Border Town",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "Greenpoint",
+      "borough": "Brooklyn",
+      "city": "NYC",
+      "closed": false,
+      "lat": 40.7255933,
+      "lng": -73.9455971,
+      "placeId": "ChIJUfCoMwBZwokRgaqNMkVgfs4",
+      "address": "189 Nassau Ave, Brooklyn, NY 11222, USA",
+      "cuisine": "Mexican Restaurant",
+      "cuisineTags": [
+        "Mexican Restaurant"
+      ],
+      "priceLevel": 2,
+      "openPeriods": [
+        {
+          "day": 0,
+          "open": "0900",
+          "close": "1400"
+        },
+        {
+          "day": 0,
+          "open": "1500",
+          "close": "2100"
+        },
+        {
+          "day": 3,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 4,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 5,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 6,
+          "open": "0900",
+          "close": "1400"
+        },
+        {
+          "day": 6,
+          "open": "1500",
+          "close": "2200"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: Closed",
+        "Tuesday: Closed",
+        "Wednesday: 5:00 – 10:00 PM",
+        "Thursday: 5:00 – 10:00 PM",
+        "Friday: 5:00 – 10:00 PM",
+        "Saturday: 9:00 AM – 2:00 PM, 3:00 – 10:00 PM",
+        "Sunday: 9:00 AM – 2:00 PM, 3:00 – 9:00 PM"
+      ],
+      "googleRating": 4.4,
+      "googleRatingCount": 171
+    },
+    {
       "id": "cafe-alula",
       "name": "Cafe Alula",
       "hasBeenTo": true,
@@ -44780,7 +44850,7 @@
       "cuisine": "Italian Restaurant",
       "googleRating": 4.4,
       "googleRatingCount": 700,
-      "closed": true
+      "closed": false
     },
     {
       "id": "beco",
@@ -54440,7 +54510,19 @@
       "neighborhood": "Battery Park City",
       "borough": "Manhattan",
       "city": "NYC",
-      "closed": false
+      "closed": false,
+      "lat": 40.7044135,
+      "lng": -74.0179133,
+      "placeId": "ChIJg3O8z59ZwokRZQN53RezCkA",
+      "address": "22 Battery Pl, New York, NY 10004, USA",
+      "cuisine": "Cocktail Bar",
+      "cuisineTags": [
+        "Cocktail Bar",
+        "Bar"
+      ],
+      "priceLevel": 2,
+      "googleRating": 5,
+      "googleRatingCount": 20
     },
     {
       "id": "aroqa",
@@ -67392,7 +67474,7 @@
       "cuisine": "Fast Food Restaurant",
       "googleRating": 4.4,
       "googleRatingCount": 606,
-      "closed": true
+      "closed": false
     },
     {
       "id": "s-mac",
@@ -67669,76 +67751,6 @@
       "cuisine": "Seafood Restaurant",
       "googleRating": 4.5,
       "googleRatingCount": 192,
-      "closed": false
-    },
-    {
-      "id": "soba-ya",
-      "name": "Soba-ya",
-      "hasBeenTo": false,
-      "isRestaurant": true,
-      "isSnacksDessert": false,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "East Village",
-      "borough": "Manhattan",
-      "city": "NYC",
-      "lat": 40.7296064,
-      "lng": -73.9879383,
-      "placeId": "ChIJVUXabZxZwokRh-_g7s0HxVI",
-      "address": "229 E 9th St, New York, NY 10003, USA",
-      "cuisineTags": [
-        "Japanese Restaurant"
-      ],
-      "priceLevel": 2,
-      "openPeriods": [
-        {
-          "day": 0,
-          "open": "1200",
-          "close": "2000"
-        },
-        {
-          "day": 1,
-          "open": "1200",
-          "close": "2100"
-        },
-        {
-          "day": 2,
-          "open": "1200",
-          "close": "2100"
-        },
-        {
-          "day": 3,
-          "open": "1200",
-          "close": "2100"
-        },
-        {
-          "day": 4,
-          "open": "1200",
-          "close": "2100"
-        },
-        {
-          "day": 5,
-          "open": "1200",
-          "close": "2200"
-        },
-        {
-          "day": 6,
-          "open": "1200",
-          "close": "2200"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 12:00 – 9:00 PM",
-        "Tuesday: 12:00 – 9:00 PM",
-        "Wednesday: 12:00 – 9:00 PM",
-        "Thursday: 12:00 – 9:00 PM",
-        "Friday: 12:00 – 10:00 PM",
-        "Saturday: 12:00 – 10:00 PM",
-        "Sunday: 12:00 – 8:00 PM"
-      ],
-      "cuisine": "Japanese Restaurant",
-      "googleRating": 4.2,
-      "googleRatingCount": 1248,
       "closed": false
     },
     {
@@ -73107,10 +73119,10 @@
     {
       "id": "manhatta",
       "name": "Manhatta",
-      "hasBeenTo": false,
+      "hasBeenTo": true,
       "isRestaurant": true,
       "isSnacksDessert": false,
-      "isBar": false,
+      "isBar": true,
       "notes": "",
       "neighborhood": "Financial District",
       "borough": "Manhattan",
@@ -74028,84 +74040,6 @@
       ],
       "googleRating": 4.5,
       "googleRatingCount": 1207,
-      "closed": false
-    },
-    {
-      "id": "for-five",
-      "name": "For Five",
-      "hasBeenTo": true,
-      "isRestaurant": false,
-      "isSnacksDessert": true,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "Financial District",
-      "borough": "Manhattan",
-      "city": "NYC",
-      "lat": 40.71234,
-      "lng": -74.0151576,
-      "placeId": "ChIJ-wSdx3ZbwokRJ4dRba0XniM",
-      "address": "225 Liberty St, New York, NY 10281, USA",
-      "cuisine": "Coffee Shop",
-      "cuisineTags": [
-        "Coffee Shop",
-        "Internet Cafe",
-        "Pastry Shop",
-        "Dessert Shop",
-        "Cafe",
-        "Event Venue",
-        "Confectionery",
-        "Bakery",
-        "Service"
-      ],
-      "priceLevel": 1,
-      "openPeriods": [
-        {
-          "day": 0,
-          "open": "0800",
-          "close": "1600"
-        },
-        {
-          "day": 1,
-          "open": "0700",
-          "close": "1900"
-        },
-        {
-          "day": 2,
-          "open": "0700",
-          "close": "1900"
-        },
-        {
-          "day": 3,
-          "open": "0700",
-          "close": "1900"
-        },
-        {
-          "day": 4,
-          "open": "0700",
-          "close": "1900"
-        },
-        {
-          "day": 5,
-          "open": "0700",
-          "close": "1900"
-        },
-        {
-          "day": 6,
-          "open": "0800",
-          "close": "1600"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 7:00 AM – 7:00 PM",
-        "Tuesday: 7:00 AM – 7:00 PM",
-        "Wednesday: 7:00 AM – 7:00 PM",
-        "Thursday: 7:00 AM – 7:00 PM",
-        "Friday: 7:00 AM – 7:00 PM",
-        "Saturday: 8:00 AM – 4:00 PM",
-        "Sunday: 8:00 AM – 4:00 PM"
-      ],
-      "googleRating": 3.1,
-      "googleRatingCount": 157,
       "closed": false
     },
     {
@@ -78923,6 +78857,71 @@
       "googleRating": 4.5,
       "googleRatingCount": 1559,
       "closed": false
+    },
+    {
+      "id": "chim-chim",
+      "name": "Chim Chim",
+      "hasBeenTo": false,
+      "isRestaurant": false,
+      "isSnacksDessert": true,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "Flatiron/Gramercy",
+      "borough": "Manhattan",
+      "city": "NYC",
+      "closed": false,
+      "lat": 40.7350772,
+      "lng": -73.98033079999999,
+      "placeId": "ChIJt-w9bQBZwokRhJaVYXFxEg4",
+      "address": "352 E 20th St, New York, NY 10003, USA",
+      "cuisine": "Bakery",
+      "cuisineTags": [
+        "Bakery"
+      ],
+      "priceLevel": 1,
+      "openPeriods": [
+        {
+          "day": 0,
+          "open": "0900",
+          "close": "1800"
+        },
+        {
+          "day": 2,
+          "open": "0900",
+          "close": "1800"
+        },
+        {
+          "day": 3,
+          "open": "0900",
+          "close": "1800"
+        },
+        {
+          "day": 4,
+          "open": "0900",
+          "close": "1800"
+        },
+        {
+          "day": 5,
+          "open": "0900",
+          "close": "1800"
+        },
+        {
+          "day": 6,
+          "open": "0900",
+          "close": "1800"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: Closed",
+        "Tuesday: 9:00 AM – 6:00 PM",
+        "Wednesday: 9:00 AM – 6:00 PM",
+        "Thursday: 9:00 AM – 6:00 PM",
+        "Friday: 9:00 AM – 6:00 PM",
+        "Saturday: 9:00 AM – 6:00 PM",
+        "Sunday: 9:00 AM – 6:00 PM"
+      ],
+      "googleRating": 4.7,
+      "googleRatingCount": 143
     },
     {
       "id": "devocion",
@@ -94053,132 +94052,6 @@
       "closed": false
     },
     {
-      "id": "naya--midtown-east",
-      "name": "Naya",
-      "hasBeenTo": false,
-      "isRestaurant": true,
-      "isSnacksDessert": false,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "Midtown East",
-      "borough": "Manhattan",
-      "city": "NYC",
-      "lat": 40.75173119999999,
-      "lng": -73.9739862,
-      "placeId": "ChIJ3wZb-QJZwokRvm3Um5b9hmo",
-      "address": "688 3rd Ave, New York, NY 10017, USA",
-      "cuisineTags": [
-        "Lebanese Restaurant",
-        "Falafel Restaurant",
-        "Shawarma Restaurant",
-        "Vegan Restaurant",
-        "Vegetarian Restaurant",
-        "Middle Eastern Restaurant",
-        "Salad Shop"
-      ],
-      "priceLevel": 2,
-      "openPeriods": [
-        {
-          "day": 1,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 2,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 3,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 4,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 5,
-          "open": "1030",
-          "close": "2100"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 10:30 AM – 9:00 PM",
-        "Tuesday: 10:30 AM – 9:00 PM",
-        "Wednesday: 10:30 AM – 9:00 PM",
-        "Thursday: 10:30 AM – 9:00 PM",
-        "Friday: 10:30 AM – 9:00 PM",
-        "Saturday: Closed",
-        "Sunday: Closed"
-      ],
-      "cuisine": "Lebanese Restaurant",
-      "googleRating": 4.3,
-      "googleRatingCount": 705,
-      "closed": false
-    },
-    {
-      "id": "naya--west-50s",
-      "name": "Naya",
-      "hasBeenTo": false,
-      "isRestaurant": true,
-      "isSnacksDessert": false,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "West 50s",
-      "borough": "Manhattan",
-      "city": "NYC",
-      "lat": 40.7611922,
-      "lng": -73.9812355,
-      "placeId": "ChIJ8Xm4UgBZwokRC1CONY9S61o",
-      "address": "147 W 51st St, New York, NY 10019, USA",
-      "cuisineTags": [
-        "Mediterranean Restaurant"
-      ],
-      "priceLevel": 2,
-      "openPeriods": [
-        {
-          "day": 1,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 2,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 3,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 4,
-          "open": "1030",
-          "close": "2100"
-        },
-        {
-          "day": 5,
-          "open": "1030",
-          "close": "1700"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 10:30 AM – 9:00 PM",
-        "Tuesday: 10:30 AM – 9:00 PM",
-        "Wednesday: 10:30 AM – 9:00 PM",
-        "Thursday: 10:30 AM – 9:00 PM",
-        "Friday: 10:30 AM – 5:00 PM",
-        "Saturday: Closed",
-        "Sunday: Closed"
-      ],
-      "cuisine": "Mediterranean Restaurant",
-      "googleRating": 4.3,
-      "googleRatingCount": 49,
-      "closed": false
-    },
-    {
       "id": "obao--midtown-east",
       "name": "Obao",
       "hasBeenTo": false,
@@ -99919,7 +99792,7 @@
       "cuisine": "Italian Restaurant",
       "googleRating": 4.3,
       "googleRatingCount": 929,
-      "closed": true
+      "closed": false
     },
     {
       "id": "aunt-jake-s--upper-east-side",
@@ -100071,7 +99944,7 @@
       "priceLevel": 2,
       "googleRating": 4.2,
       "googleRatingCount": 747,
-      "closed": true
+      "closed": false
     },
     {
       "id": "cafe-habana",
@@ -108037,6 +107910,71 @@
       "closed": false
     },
     {
+      "id": "pattin",
+      "name": "Pattin'",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "Theatre District/Hell’s Kitchen/and to the Hudson",
+      "borough": "Manhattan",
+      "city": "NYC",
+      "closed": false,
+      "lat": 40.7611861,
+      "lng": -73.9859821,
+      "placeId": "ChIJDUVGohdZwokRPIX27jFiDis",
+      "address": "242 W 49th St, New York, NY 10019, USA",
+      "cuisine": "American Restaurant",
+      "cuisineTags": [
+        "American Restaurant"
+      ],
+      "priceLevel": 3,
+      "openPeriods": [
+        {
+          "day": 0,
+          "open": "1130",
+          "close": "2300"
+        },
+        {
+          "day": 2,
+          "open": "1200",
+          "close": "2300"
+        },
+        {
+          "day": 3,
+          "open": "1200",
+          "close": "2300"
+        },
+        {
+          "day": 4,
+          "open": "1200",
+          "close": "2300"
+        },
+        {
+          "day": 5,
+          "open": "1200",
+          "close": "2300"
+        },
+        {
+          "day": 6,
+          "open": "1130",
+          "close": "2300"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: Closed",
+        "Tuesday: 12:00 – 11:00 PM",
+        "Wednesday: 12:00 – 11:00 PM",
+        "Thursday: 12:00 – 11:00 PM",
+        "Friday: 12:00 – 11:00 PM",
+        "Saturday: 11:30 AM – 11:00 PM",
+        "Sunday: 11:30 AM – 11:00 PM"
+      ],
+      "googleRating": 4.9,
+      "googleRatingCount": 60
+    },
+    {
       "id": "p-s-kitchen",
       "name": "P.S. Kitchen",
       "hasBeenTo": false,
@@ -110308,7 +110246,7 @@
       "priceLevel": 2,
       "googleRating": 4.4,
       "googleRatingCount": 1994,
-      "closed": true
+      "closed": false
     },
     {
       "id": "bubby-s",
@@ -124183,6 +124121,66 @@
       "closed": false
     },
     {
+      "id": "naya",
+      "name": "Naya",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "West 50s",
+      "borough": "Manhattan",
+      "city": "NYC",
+      "closed": false,
+      "lat": 40.7611922,
+      "lng": -73.9812355,
+      "placeId": "ChIJ8Xm4UgBZwokRC1CONY9S61o",
+      "address": "147 W 51st St, New York, NY 10019, USA",
+      "cuisine": "Mediterranean Restaurant",
+      "cuisineTags": [
+        "Mediterranean Restaurant"
+      ],
+      "priceLevel": 1,
+      "openPeriods": [
+        {
+          "day": 1,
+          "open": "1030",
+          "close": "2100"
+        },
+        {
+          "day": 2,
+          "open": "1030",
+          "close": "2100"
+        },
+        {
+          "day": 3,
+          "open": "1030",
+          "close": "2100"
+        },
+        {
+          "day": 4,
+          "open": "1030",
+          "close": "2100"
+        },
+        {
+          "day": 5,
+          "open": "1030",
+          "close": "1700"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: 10:30 AM – 9:00 PM",
+        "Tuesday: 10:30 AM – 9:00 PM",
+        "Wednesday: 10:30 AM – 9:00 PM",
+        "Thursday: 10:30 AM – 9:00 PM",
+        "Friday: 10:30 AM – 5:00 PM",
+        "Saturday: Closed",
+        "Sunday: Closed"
+      ],
+      "googleRating": 4.2,
+      "googleRatingCount": 55
+    },
+    {
       "id": "per-se",
       "name": "Per Se",
       "hasBeenTo": false,
@@ -130982,7 +130980,56 @@
       "neighborhood": "Astoria",
       "borough": "Queens",
       "city": "NYC",
-      "closed": false
+      "closed": false,
+      "lat": 40.75400459999999,
+      "lng": -73.92986069999999,
+      "placeId": "ChIJ-ecLnC5fwokRTsOuoOsTC6U",
+      "address": "37-10 33rd St, Long Island City, NY 11101, USA",
+      "cuisine": "Seafood Restaurant",
+      "cuisineTags": [
+        "Seafood Restaurant",
+        "Wholesaler",
+        "Service"
+      ],
+      "priceLevel": 2,
+      "openPeriods": [
+        {
+          "day": 2,
+          "open": "1200",
+          "close": "2200"
+        },
+        {
+          "day": 3,
+          "open": "1200",
+          "close": "2200"
+        },
+        {
+          "day": 4,
+          "open": "1200",
+          "close": "2200"
+        },
+        {
+          "day": 5,
+          "open": "1200",
+          "close": "2200"
+        },
+        {
+          "day": 6,
+          "open": "1200",
+          "close": "2200"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: Closed",
+        "Tuesday: 12:00 – 10:00 PM",
+        "Wednesday: 12:00 – 10:00 PM",
+        "Thursday: 12:00 – 10:00 PM",
+        "Friday: 12:00 – 10:00 PM",
+        "Saturday: 12:00 – 10:00 PM",
+        "Sunday: Closed"
+      ],
+      "googleRating": 4.3,
+      "googleRatingCount": 1897
     },
     {
       "id": "astoria-seafood--long-island-city",
@@ -139275,153 +139322,6 @@
       "closed": false
     },
     {
-      "id": "cafe-henri",
-      "name": "Cafe Henri",
-      "hasBeenTo": false,
-      "isRestaurant": true,
-      "isSnacksDessert": false,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "Long Island City",
-      "borough": "Queens",
-      "city": "NYC",
-      "lat": 40.7425899,
-      "lng": -73.9538049,
-      "placeId": "ChIJI8QZECNZwokRJ6nKtIJ_gCw",
-      "address": "10-10 50th Ave, Long Island City, NY 11101, USA",
-      "cuisine": "French Restaurant",
-      "cuisineTags": [
-        "French Restaurant",
-        "Breakfast Restaurant",
-        "Diner",
-        "Bar"
-      ],
-      "priceLevel": 2,
-      "openPeriods": [
-        {
-          "day": 0,
-          "open": "0830",
-          "close": "1500"
-        },
-        {
-          "day": 1,
-          "open": "0830",
-          "close": "2300"
-        },
-        {
-          "day": 2,
-          "open": "0830",
-          "close": "2300"
-        },
-        {
-          "day": 3,
-          "open": "0830",
-          "close": "2300"
-        },
-        {
-          "day": 4,
-          "open": "0830",
-          "close": "2300"
-        },
-        {
-          "day": 5,
-          "open": "0830",
-          "close": "2300"
-        },
-        {
-          "day": 6,
-          "open": "0830",
-          "close": "2300"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 8:30 AM – 11:00 PM",
-        "Tuesday: 8:30 AM – 11:00 PM",
-        "Wednesday: 8:30 AM – 11:00 PM",
-        "Thursday: 8:30 AM – 11:00 PM",
-        "Friday: 8:30 AM – 11:00 PM",
-        "Saturday: 8:30 AM – 11:00 PM",
-        "Sunday: 8:30 AM – 3:00 PM"
-      ],
-      "googleRating": 4.5,
-      "googleRatingCount": 1150,
-      "closed": false
-    },
-    {
-      "id": "casa-enrique",
-      "name": "Casa Enrique",
-      "hasBeenTo": false,
-      "isRestaurant": true,
-      "isSnacksDessert": false,
-      "isBar": false,
-      "notes": "",
-      "neighborhood": "Long Island City",
-      "borough": "Queens",
-      "city": "NYC",
-      "lat": 40.7434063,
-      "lng": -73.95438089999999,
-      "placeId": "ChIJv4bbdSNZwokRCgKfDGF8az8",
-      "address": "5-48 49th Ave, Long Island City, NY 11101, USA",
-      "cuisine": "Mexican Restaurant",
-      "cuisineTags": [
-        "Mexican Restaurant",
-        "Diner",
-        "Brunch Restaurant",
-        "Cocktail Bar",
-        "Bar"
-      ],
-      "priceLevel": 2,
-      "openPeriods": [
-        {
-          "day": 0,
-          "open": "1100",
-          "close": "2230"
-        },
-        {
-          "day": 1,
-          "open": "1700",
-          "close": "2215"
-        },
-        {
-          "day": 2,
-          "open": "1700",
-          "close": "2215"
-        },
-        {
-          "day": 3,
-          "open": "1700",
-          "close": "2215"
-        },
-        {
-          "day": 4,
-          "open": "1700",
-          "close": "2215"
-        },
-        {
-          "day": 5,
-          "open": "1700",
-          "close": "2215"
-        },
-        {
-          "day": 6,
-          "open": "1100",
-          "close": "2230"
-        }
-      ],
-      "weekdayHours": [
-        "Monday: 5:00 – 10:15 PM",
-        "Tuesday: 5:00 – 10:15 PM",
-        "Wednesday: 5:00 – 10:15 PM",
-        "Thursday: 5:00 – 10:15 PM",
-        "Friday: 5:00 – 10:15 PM",
-        "Saturday: 11:00 AM – 10:30 PM",
-        "Sunday: 11:00 AM – 10:30 PM"
-      ],
-      "googleRating": 4.5,
-      "googleRatingCount": 3076,
-      "closed": false
-    },
-    {
       "id": "cevabdzinica-sarajevo",
       "name": "Cevabdzinica Sarajevo",
       "hasBeenTo": false,
@@ -145462,6 +145362,267 @@
       "googleRating": 4.2,
       "googleRatingCount": 257,
       "closed": true
+    },
+    {
+      "id": "uncle-ray-s--hell-s-kitchen",
+      "name": "Uncle Ray’s",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "Hell’s Kitchen",
+      "borough": "",
+      "city": "New York City",
+      "closed": false,
+      "lat": 40.7649093,
+      "lng": -73.9875422,
+      "placeId": "ChIJJUdD9NtZwokR_hv_n2I9ALQ",
+      "address": "790 9th Ave, New York, NY 10019, USA",
+      "cuisineTags": [],
+      "priceLevel": 2,
+      "openPeriods": [
+        {
+          "day": 0,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 0,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 1,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 1,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 2,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 2,
+          "open": "1600",
+          "close": "2100"
+        },
+        {
+          "day": 3,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 3,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 4,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 4,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 5,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 5,
+          "open": "1630",
+          "close": "2200"
+        },
+        {
+          "day": 6,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 6,
+          "open": "1630",
+          "close": "2200"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Tuesday: 10:30 AM – 3:30 PM, 4:00 – 9:00 PM",
+        "Wednesday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Thursday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Friday: 10:30 AM – 3:30 PM, 4:30 – 10:00 PM",
+        "Saturday: 10:30 AM – 3:30 PM, 4:30 – 10:00 PM",
+        "Sunday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM"
+      ],
+      "googleRating": 4.5,
+      "googleRatingCount": 235
+    },
+    {
+      "id": "uncle-ray-s--west-50s",
+      "name": "Uncle Ray's",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "",
+      "neighborhood": "West 50s",
+      "borough": "",
+      "city": "New York City",
+      "closed": false,
+      "lat": 40.7649093,
+      "lng": -73.9875422,
+      "placeId": "ChIJJUdD9NtZwokR_hv_n2I9ALQ",
+      "address": "790 9th Ave, New York, NY 10019, USA",
+      "cuisineTags": [],
+      "priceLevel": 2,
+      "openPeriods": [
+        {
+          "day": 0,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 0,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 1,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 1,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 2,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 2,
+          "open": "1600",
+          "close": "2100"
+        },
+        {
+          "day": 3,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 3,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 4,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 4,
+          "open": "1630",
+          "close": "2100"
+        },
+        {
+          "day": 5,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 5,
+          "open": "1630",
+          "close": "2200"
+        },
+        {
+          "day": 6,
+          "open": "1030",
+          "close": "1530"
+        },
+        {
+          "day": 6,
+          "open": "1630",
+          "close": "2200"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Tuesday: 10:30 AM – 3:30 PM, 4:00 – 9:00 PM",
+        "Wednesday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Thursday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM",
+        "Friday: 10:30 AM – 3:30 PM, 4:30 – 10:00 PM",
+        "Saturday: 10:30 AM – 3:30 PM, 4:30 – 10:00 PM",
+        "Sunday: 10:30 AM – 3:30 PM, 4:30 – 9:00 PM"
+      ],
+      "googleRating": 4.5,
+      "googleRatingCount": 235
+    },
+    {
+      "id": "arthur",
+      "name": "Arthur",
+      "hasBeenTo": false,
+      "isRestaurant": true,
+      "isSnacksDessert": false,
+      "isBar": false,
+      "notes": "Brioche",
+      "neighborhood": "Greenpoint",
+      "borough": "",
+      "city": "New York City",
+      "closed": false,
+      "lat": 40.72942949999999,
+      "lng": -73.95731710000001,
+      "placeId": "ChIJgz5aFX9ZwokRcfO7pOPFaBU",
+      "address": "132 Franklin St, Brooklyn, NY 11222, USA",
+      "cuisineTags": [],
+      "priceLevel": 4,
+      "openPeriods": [
+        {
+          "day": 2,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 3,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 4,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 5,
+          "open": "1700",
+          "close": "2200"
+        },
+        {
+          "day": 6,
+          "open": "1700",
+          "close": "2200"
+        }
+      ],
+      "weekdayHours": [
+        "Monday: Closed",
+        "Tuesday: 5:00 – 10:00 PM",
+        "Wednesday: 5:00 – 10:00 PM",
+        "Thursday: 5:00 – 10:00 PM",
+        "Friday: 5:00 – 10:00 PM",
+        "Saturday: 5:00 – 10:00 PM",
+        "Sunday: Closed"
+      ],
+      "googleRating": 4.7,
+      "googleRatingCount": 81
     }
   ]
 }
