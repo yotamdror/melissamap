@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import type { Place, PlaceType } from '../types';
 import { matchesNeighborhoodQuery } from '../lib/matchesQuery';
+import { placeRequest } from '../lib/placeRequest';
 
 interface Props {
   editing: Place | null;
@@ -54,27 +55,18 @@ export default function AddPlaceForm({ editing, onSaved, onDeleted, neighborhood
     setLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/add-place', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: editing?.id,
-          originalName: editing?.name,
-          originalNeighborhood: editing?.neighborhood,
-          name: name.trim(),
-          isRestaurant: types.includes('restaurant'),
-          isBar: types.includes('bar'),
-          isSnacksDessert: types.includes('snacks'),
-          neighborhood: neighborhood.trim(),
-          notes: notes.trim(),
-          hasBeenTo,
-        }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? 'Failed to save place');
-      }
-      const place: Place = await res.json();
+      const place = await placeRequest<Place>('/api/add-place', {
+        id: editing?.id,
+        originalName: editing?.name,
+        originalNeighborhood: editing?.neighborhood,
+        name: name.trim(),
+        isRestaurant: types.includes('restaurant'),
+        isBar: types.includes('bar'),
+        isSnacksDessert: types.includes('snacks'),
+        neighborhood: neighborhood.trim(),
+        notes: notes.trim(),
+        hasBeenTo,
+      }, 'save');
       onSaved(place);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
@@ -88,15 +80,7 @@ export default function AddPlaceForm({ editing, onSaved, onDeleted, neighborhood
     setDeleting(true);
     setError('');
     try {
-      const res = await fetch('/api/delete-place', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: editing.name, neighborhood: editing.neighborhood }),
-      });
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? 'Failed to delete place');
-      }
+      await placeRequest('/api/delete-place', { name: editing.name, neighborhood: editing.neighborhood }, 'delete');
       onDeleted(editing);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
@@ -170,7 +154,7 @@ export default function AddPlaceForm({ editing, onSaved, onDeleted, neighborhood
         </span>
       </label>
 
-      {error && <div className="add-place-form__error">{error}</div>}
+      {error && <div className="add-place-form__error" role="alert">{error}</div>}
 
       <button className="add-place-form__submit" type="submit" disabled={loading}>
         {loading ? 'Saving…' : editing ? 'Save changes' : 'Add place'}
