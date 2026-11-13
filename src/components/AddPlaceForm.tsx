@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import type { Place, PlaceType } from '../types';
-import { matchesQuery } from '../lib/matchesQuery';
+import { matchesNeighborhoodQuery } from '../lib/matchesQuery';
 
 interface Props {
   editing: Place | null;
@@ -38,7 +38,7 @@ export default function AddPlaceForm({ editing, onSaved, onDeleted, neighborhood
   // doesn't silently create a duplicate that fragments the filter list.
   const neighborhoodQuery = neighborhood.trim();
   const neighborhoodSuggestions = neighborhoodQuery
-    ? neighborhoods.filter(n => n !== neighborhoodQuery && matchesQuery(n, neighborhoodQuery)).slice(0, 6)
+    ? neighborhoods.filter(n => n !== neighborhoodQuery && matchesNeighborhoodQuery(n, neighborhoodQuery)).slice(0, 6)
     : [];
 
   function toggleType(t: PlaceType) {

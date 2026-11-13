@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Filters, PlaceType } from '../types';
 import { shortCuisineLabel } from '../lib/cuisineLabel';
-import { matchesQuery } from '../lib/matchesQuery';
+import { matchesNeighborhoodQuery, matchesQuery } from '../lib/matchesQuery';
 
 interface Props {
   filters: Filters;
@@ -107,7 +107,7 @@ export default function FilterSidebar({
     : [];
   const neighborhoodSuggestions: Suggestion[] = q
     ? neighborhoods
-        .filter(n => matchesQuery(n, filters.search) && !filters.neighborhood.includes(n))
+        .filter(n => matchesNeighborhoodQuery(n, filters.search) && !filters.neighborhood.includes(n))
         .map(label => ({ label, kind: 'neighborhood' as const }))
     : [];
   const suggestions = [...cuisineSuggestions, ...neighborhoodSuggestions].slice(0, 8);

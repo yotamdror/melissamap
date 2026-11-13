@@ -10,3 +10,8 @@ export function matchesQuery(value: string, query: string): boolean {
   if (v.startsWith(q)) return true;
   return v.split(/[\s/]+/).some(word => word.startsWith(q));
 }
+
+// Neighborhood suggestions match any part of the saved label.
+export function matchesNeighborhoodQuery(value: string, query: string): boolean {
+  return value.toLowerCase().includes(query.toLowerCase().trim());
+}
