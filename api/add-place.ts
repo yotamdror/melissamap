@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { jwtVerify } from 'jose';
 import { google } from 'googleapis';
 import type { Place } from '../src/types';
-import { getPlaceSearchQuery } from '../src/placeSearchOverrides';
+import { getPlaceSearchQuery } from '../src/placeSearchOverrides.js';
 
 // Same denylist approach as scripts/sync.ts - see that file for why a
 // denylist beats a hand-maintained cuisine allowlist.
