@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PasswordGate from './components/PasswordGate';
 import MapView from './components/MapView';
 import ListView from './components/ListView';
@@ -7,6 +7,8 @@ import LastUpdated from './components/LastUpdated';
 import PlaceFormModal from './components/PlaceFormModal';
 import type { PlacesData, Filters, Place } from './types';
 import { isOpenNow } from './lib/openNow';
+
+const EMPTY_PLACES: Place[] = [];
 
 const DEFAULT_FILTERS: Filters = {
   types: ['restaurant', 'bar', 'snacks'],
@@ -73,6 +75,8 @@ function applyFilters(places: Place[], filters: Filters): Place[] {
 export default function App() {
   const [role, setRole] = useState<'admin' | 'viewer' | null | undefined>(undefined);
   const [data, setData] = useState<PlacesData | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [view, setView] = useState<'map' | 'list'>('map');
   // null = closed, 'new' = add form, a Place = editing that place
@@ -85,12 +89,20 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (role) {
-      fetch('/api/places')
-        .then(r => r.json())
-        .then(setData);
-    }
-  }, [role]);
+    if (!role) return;
+    const controller = new AbortController();
+    setLoadFailed(false);
+    fetch('/api/places', { signal: controller.signal })
+      .then(r => {
+        if (!r.ok) throw new Error('Places request failed');
+        return r.json();
+      })
+      .then(setData)
+      .catch(() => {
+        if (!controller.signal.aborted) setLoadFailed(true);
+      });
+    return () => controller.abort();
+  }, [role, attempt]);
 
   function logout() {
     fetch('/api/logout', { method: 'POST' }).finally(() => {
@@ -116,38 +128,39 @@ export default function App() {
     setFormTarget(null);
   }
 
-  if (role === undefined) return null;
-  if (!role) return <PasswordGate onSuccess={setRole} />;
-  if (!data) return null;
-
-  const isAdmin = role === 'admin';
-  const mappablePlaces = data.places.filter(p => p.lat != null && p.lng != null);
-  const filtered = applyFilters(mappablePlaces, filters);
-  const cuisines = [...new Set(data.places.map(p => p.cuisine).filter(Boolean))].sort() as string[];
-  const neighborhoods = [...new Set(data.places.map(p => p.neighborhood).filter(Boolean))].sort();
+  const places = data?.places ?? EMPTY_PLACES;
+  const mappablePlaces = useMemo(() => places.filter(p => p.lat != null && p.lng != null), [places]);
+  const filtered = useMemo(() => applyFilters(mappablePlaces, filters), [mappablePlaces, filters]);
+  const cuisines = useMemo(() => [...new Set(places.map(p => p.cuisine).filter(Boolean))].sort() as string[], [places]);
+  const neighborhoods = useMemo(() => [...new Set(places.map(p => p.neighborhood).filter(Boolean))].sort(), [places]);
 
   // Color each cuisine chip by whichever type (restaurant/bar/snack) most of its
   // places actually are, so cuisine chips reinforce the existing type colors
   // instead of introducing an unrelated 4th color.
-  const cuisineType: Record<string, 'restaurant' | 'bar' | 'snacks'> = {};
-  for (const c of cuisines) {
-    const counts = { restaurant: 0, bar: 0, snacks: 0 };
-    for (const p of data.places) {
-      if (p.cuisine !== c) continue;
-      if (p.isBar) counts.bar++;
-      else if (p.isSnacksDessert) counts.snacks++;
-      else counts.restaurant++;
+  const cuisineType = useMemo(() => {
+    const totals = new Map<string, { restaurant: number; bar: number; snacks: number }>();
+    for (const p of places) {
+      if (!p.cuisine) continue;
+      const counts = totals.get(p.cuisine) ?? { restaurant: 0, bar: 0, snacks: 0 };
+      counts[p.isBar ? 'bar' : p.isSnacksDessert ? 'snacks' : 'restaurant']++;
+      totals.set(p.cuisine, counts);
     }
-    cuisineType[c] = counts.bar >= counts.restaurant && counts.bar >= counts.snacks
-      ? 'bar'
-      : counts.snacks >= counts.restaurant
-        ? 'snacks'
-        : 'restaurant';
-  }
+    const types: Record<string, 'restaurant' | 'bar' | 'snacks'> = {};
+    for (const [cuisine, counts] of totals) {
+      types[cuisine] = counts.bar >= counts.restaurant && counts.bar >= counts.snacks
+        ? 'bar' : counts.snacks >= counts.restaurant ? 'snacks' : 'restaurant';
+    }
+    return types;
+  }, [places]);
+
+  if (role === undefined) return null;
+  if (!role) return <PasswordGate onSuccess={setRole} />;
+  const isAdmin = role === 'admin';
 
   return (
     <div className="app">
-      <FilterSidebar
+      {loadFailed && <div role="alert">Places could not load. <button onClick={() => setAttempt(n => n + 1)}>Retry</button></div>}
+      {data && <FilterSidebar
         filters={filters}
         onChange={setFilters}
         cuisines={cuisines}
@@ -159,7 +172,7 @@ export default function App() {
         view={view}
         onViewChange={setView}
         resultCount={filtered.length}
-      />
+      />}
       <div className="app__content">
         {view === 'map' ? (
           <MapView
@@ -185,7 +198,7 @@ export default function App() {
           neighborhoods={neighborhoods}
         />
       )}
-      <LastUpdated date={data.lastUpdated} />
+      <LastUpdated date={data?.lastUpdated ?? null} />
     </div>
   );
 }
