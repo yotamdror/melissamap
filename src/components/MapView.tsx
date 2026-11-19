@@ -1,11 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   APIProvider,
   Map as GoogleMap,
-  Marker,
   InfoWindow,
   useMap,
-  useMarkerRef,
 } from '@vis.gl/react-google-maps';
 import type { Place } from '../types';
 import { shortCuisineLabel } from '../lib/cuisineLabel';
@@ -27,14 +25,6 @@ const WANT_TO_GO_OPACITY = 0.75;
 
 interface Props {
   places: Place[];
-  isAdmin: boolean;
-  onEdit: (p: Place) => void;
-}
-
-interface MarkerWithInfoProps {
-  place: Place;
-  selected: boolean;
-  onSelect: (p: Place | null) => void;
   isAdmin: boolean;
   onEdit: (p: Place) => void;
 }
@@ -71,174 +61,137 @@ function pinIconUrl(type: PlaceType): string {
   return url;
 }
 
-function MarkerWithInfo({ place, selected, onSelect, isAdmin, onEdit }: MarkerWithInfoProps) {
-  const [markerRef, marker] = useMarkerRef();
-  const type = placeType(place);
-
-  return (
-    <>
-      <Marker
-        ref={markerRef}
-        position={{ lat: place.lat!, lng: place.lng! }}
-        icon={{
-          url: pinIconUrl(type),
-          scaledSize: new google.maps.Size(22, 28),
-          anchor: new google.maps.Point(11, 28),
-        }}
-        opacity={place.hasBeenTo ? 1 : WANT_TO_GO_OPACITY}
-        title={place.name}
-        onClick={() => onSelect(selected ? null : place)}
-      />
-
-      {selected && marker && (
-        <InfoWindow anchor={marker} onCloseClick={() => onSelect(null)}>
-          <div className="info-window">
-            <div className="info-window__row">
-              <div className="info-window__name">{place.name}</div>
-              {isAdmin && (
-                <button className="list-row__edit" onClick={() => onEdit(place)} aria-label={`Edit ${place.name}`}>
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <path d="M11.5 2.5l2 2L5 13l-2.5.5.5-2.5 8.5-8.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              )}
-            </div>
-
-            <div className="info-window__facts">
-              {[
-                place.cuisine ? shortCuisineLabel(place.cuisine) : null,
-                place.priceLevel ? '$'.repeat(place.priceLevel) : null,
-                place.googleRating != null
-                  ? `★ ${place.googleRating.toFixed(1)}${place.googleRatingCount != null ? ` (${place.googleRatingCount.toLocaleString()})` : ''}`
-                  : null,
-              ].filter(Boolean).join('  ·  ')}
-            </div>
-
-            {(place.neighborhood || place.hasBeenTo || place.closed) && (
-              <div className="info-window__row">
-                <span className="info-window__neighborhood">{place.neighborhood}</span>
-                {place.closed && <span className="info-window__badge info-window__badge--closed">🪦 Closed</span>}
-                {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
-              </div>
-            )}
-
-            <div className="info-window__row">
-              {place.weekdayHours && place.weekdayHours.length > 0 ? (
-                <span className="info-window__hours">
-                  {place.weekdayHours[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]}
-                </span>
-              ) : (
-                <span className="info-window__hours info-window__hours--unknown">Hours unknown</span>
-              )}
-              {place.placeId && (
-                <a
-                  // Documented Google Maps URL scheme for linking to a specific
-                  // place by ID - the informal "?q=place_id:X" form gets mangled
-                  // (treated as literal search text) when the native Maps app
-                  // intercepts the link on mobile.
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.placeId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="info-window__rating-link"
-                >
-                  Google reviews
-                </a>
-              )}
-            </div>
-
-            {place.notes && (
-              <div className="info-window__notes">{place.notes}</div>
-            )}
-          </div>
-        </InfoWindow>
-      )}
-    </>
-  );
-}
-
-function useInitialCenter() {
-  const [center, setCenter] = useState<{ lat: number; lng: number } | null>(null);
+function Markers({ places, isAdmin, onEdit }: Props) {
+  const map = useMap();
+  const markers = useRef(new Map<string, { place: Place; marker: google.maps.Marker }>());
+  const fitted = useRef(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setCenter(NYC_CENTER);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      pos => setCenter({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => setCenter(NYC_CENTER), // denied, unavailable, or timed out
-      { timeout: 5000, maximumAge: 5 * 60 * 1000 },
-    );
-  }, []);
-
-  return center;
-}
-
-function padBounds(b: google.maps.LatLngBounds, factor = 0.3): google.maps.LatLngBounds {
-  const ne = b.getNorthEast();
-  const sw = b.getSouthWest();
-  const latPad = (ne.lat() - sw.lat()) * factor;
-  const lngPad = (ne.lng() - sw.lng()) * factor;
-  return new google.maps.LatLngBounds(
-    { lat: sw.lat() - latPad, lng: sw.lng() - lngPad },
-    { lat: ne.lat() + latPad, lng: ne.lng() + lngPad },
-  );
-}
-
-// Only markers within the current (padded) viewport get rendered - with a
-// couple thousand places, rendering every one regardless of pan/zoom is what
-// causes the map to stutter.
-function useVisiblePlaces(places: Place[]): Place[] {
-  const map = useMap();
-  const [bounds, setBounds] = useState<google.maps.LatLngBounds | null>(null);
+    const entries = markers.current;
+    return () => {
+      for (const { marker } of entries.values()) {
+        google.maps.event.clearInstanceListeners(marker);
+        marker.setMap(null);
+      }
+      entries.clear();
+      fitted.current = false;
+    };
+  }, [map]);
 
   useEffect(() => {
     if (!map) return;
-    const update = () => {
-      const b = map.getBounds();
-      setBounds(b ? padBounds(b) : null);
-    };
-    update();
-    const listener = map.addListener('idle', update);
-    return () => listener.remove();
-  }, [map]);
+    const entries = markers.current;
+    const ids = new Set(places.map(place => place.id));
+    for (const [id, { marker }] of entries) {
+      if (ids.has(id)) continue;
+      google.maps.event.clearInstanceListeners(marker);
+      marker.setMap(null);
+      entries.delete(id);
+    }
+    setSelectedId(id => id && ids.has(id) ? id : null);
+    const bounds = fitted.current ? null : new google.maps.LatLngBounds();
+    for (const place of places) {
+      const position = { lat: place.lat!, lng: place.lng! };
+      bounds?.extend(position);
+      const entry = entries.get(place.id);
+      if (entry?.place === place) continue;
+      const options = {
+        position,
+        icon: pinIconUrl(placeType(place)),
+        title: place.name,
+        opacity: place.hasBeenTo ? 1 : WANT_TO_GO_OPACITY,
+      };
+      if (entry) {
+        entry.marker.setOptions(options);
+        entry.place = place;
+      } else {
+        const marker = new google.maps.Marker({ map, optimized: true, ...options });
+        marker.addListener('click', () => setSelectedId(id => id === place.id ? null : place.id));
+        entries.set(place.id, { marker, place });
+      }
+    }
+    if (bounds && places.length) {
+      if (places.length === 1) map.setCenter(bounds.getCenter());
+      else map.fitBounds(bounds, 32);
+      fitted.current = true;
+    }
+  }, [map, places]);
 
-  return useMemo(() => {
-    if (!bounds) return places;
-    return places.filter(p => bounds.contains({ lat: p.lat!, lng: p.lng! }));
-  }, [places, bounds]);
-}
-
-function Markers({ places, isAdmin, onEdit }: { places: Place[]; isAdmin: boolean; onEdit: (p: Place) => void }) {
-  const [selected, setSelected] = useState<Place | null>(null);
-  const visible = useVisiblePlaces(places);
-
+  const entry = selectedId ? markers.current.get(selectedId) : null;
+  if (!entry) return null;
+  const place = places.find(p => p.id === selectedId);
+  if (!place) return null;
   return (
-    <>
-      {visible.map(p => (
-        <MarkerWithInfo
-          key={p.id}
-          place={p}
-          selected={selected?.id === p.id}
-          onSelect={setSelected}
-          isAdmin={isAdmin}
-          onEdit={onEdit}
-        />
-      ))}
-    </>
+    <InfoWindow anchor={entry.marker} onCloseClick={() => setSelectedId(null)}>
+      <div className="info-window">
+        <div className="info-window__row">
+          <div className="info-window__name">{place.name}</div>
+          {isAdmin && (
+            <button className="list-row__edit" onClick={() => onEdit(place)} aria-label={`Edit ${place.name}`}>
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M11.5 2.5l2 2L5 13l-2.5.5.5-2.5 8.5-8.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        <div className="info-window__facts">
+          {[
+            place.cuisine ? shortCuisineLabel(place.cuisine) : null,
+            place.priceLevel ? '$'.repeat(place.priceLevel) : null,
+            place.googleRating != null
+              ? `★ ${place.googleRating.toFixed(1)}${place.googleRatingCount != null ? ` (${place.googleRatingCount.toLocaleString()})` : ''}`
+              : null,
+          ].filter(Boolean).join('  ·  ')}
+        </div>
+
+        {(place.neighborhood || place.hasBeenTo || place.closed) && (
+          <div className="info-window__row">
+            <span className="info-window__neighborhood">{place.neighborhood}</span>
+            {place.closed && <span className="info-window__badge info-window__badge--closed">🪦 Closed</span>}
+            {place.hasBeenTo && <span className="info-window__badge">Visited</span>}
+          </div>
+        )}
+
+        <div className="info-window__row">
+          {place.weekdayHours && place.weekdayHours.length > 0 ? (
+            <span className="info-window__hours">
+              {place.weekdayHours[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]}
+            </span>
+          ) : (
+            <span className="info-window__hours info-window__hours--unknown">Hours unknown</span>
+          )}
+          {place.placeId && (
+            <a
+              // Documented Google Maps URL scheme for linking to a specific
+              // place by ID - the informal "?q=place_id:X" form gets mangled
+              // (treated as literal search text) when the native Maps app
+              // intercepts the link on mobile.
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.placeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="info-window__rating-link"
+            >
+              Google reviews
+            </a>
+          )}
+        </div>
+
+        {place.notes && (
+          <div className="info-window__notes">{place.notes}</div>
+        )}
+      </div>
+    </InfoWindow>
   );
 }
 
 export default function MapView({ places, isAdmin, onEdit }: Props) {
-  const center = useInitialCenter();
-
-  if (!center) return null; // resolving geolocation (capped at 5s by the timeout above)
-
   return (
     <div className="map-container">
       <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
         <GoogleMap
-          defaultCenter={center}
+          defaultCenter={NYC_CENTER}
           defaultZoom={14}
           mapId={import.meta.env.VITE_GOOGLE_MAPS_MAP_ID}
           gestureHandling="greedy"
