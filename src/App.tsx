@@ -1,12 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
 import PasswordGate from './components/PasswordGate';
 import MapView from './components/MapView';
 import ListView from './components/ListView';
 import FilterSidebar from './components/FilterSidebar';
 import LastUpdated from './components/LastUpdated';
-import PlaceFormModal from './components/PlaceFormModal';
 import type { PlacesData, Filters, Place } from './types';
 import { isOpenNow } from './lib/openNow';
+
+const PlaceFormModal = lazy(() => import('./components/PlaceFormModal'));
 
 const EMPTY_PLACES: Place[] = [];
 
@@ -108,6 +109,7 @@ export default function App() {
     fetch('/api/logout', { method: 'POST' }).finally(() => {
       setRole(null);
       setData(null);
+      setView('map');
     });
   }
 
@@ -174,13 +176,10 @@ export default function App() {
         resultCount={filtered.length}
       />}
       <div className="app__content">
-        {view === 'map' ? (
-          <MapView
-            places={filtered}
-            isAdmin={isAdmin}
-            onEdit={setFormTarget}
-          />
-        ) : (
+        <div hidden={view !== 'map'}>
+          <MapView places={filtered} isAdmin={isAdmin} onEdit={setFormTarget} />
+        </div>
+        {view === 'list' && (
           <ListView
             places={filtered}
             isAdmin={isAdmin}
@@ -190,13 +189,15 @@ export default function App() {
         )}
       </div>
       {formTarget && (
-        <PlaceFormModal
-          editing={formTarget === 'new' ? null : formTarget}
-          onClose={() => setFormTarget(null)}
-          onSaved={upsertPlace}
-          onDeleted={removePlace}
-          neighborhoods={neighborhoods}
-        />
+        <Suspense fallback={<div role="status">Loading editor…</div>}>
+          <PlaceFormModal
+            editing={formTarget === 'new' ? null : formTarget}
+            onClose={() => setFormTarget(null)}
+            onSaved={upsertPlace}
+            onDeleted={removePlace}
+            neighborhoods={neighborhoods}
+          />
+        </Suspense>
       )}
       <LastUpdated date={data?.lastUpdated ?? null} />
     </div>
